@@ -8,6 +8,8 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
   Numbers now compare by value, sign, and unit; terms match whole words.
 - Verifier now handles superscripts, unicode ligatures and dashes, simple LaTeX, and `5 ms` vs `5ms`.
 - Facts inside visuals are now verified, and citations of blank slides fail.
+### Changed
+- Claude Code merges its own PRs once required checks pass; live API runs stay with Neo.
 
 ### Added
 - CI status badge, `/health` in the README endpoint table, ADR 0002 (FastAPI + SQLite + BM25).
