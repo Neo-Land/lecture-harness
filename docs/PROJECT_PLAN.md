@@ -3,7 +3,7 @@
 **Goal:** a portfolio-ready agent harness that turns lecture slides into verified abstracts and
 visuals, with a web UI for per-course questions, backed by measured accuracy numbers.
 
-**Current phase:** Phase 1
+**Current phase:** Phase 2
 
 ## How every phase runs
 - Work happens on branches, one PR per task group, merged by Claude Code after green CI (Neo's decision, 2026-10-30).

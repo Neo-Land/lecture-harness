@@ -3,24 +3,23 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
 ## [Unreleased]
+
+## [0.1.0] — 2026-10-30
 ### Added
 - CLI: `python -m app ingest` and `ask`, with an `--offline` mode that needs no API key.
 - Startup config validation, JSON-lines logging, and stored traces of every harness attempt.
 - Scanned slides are flagged `needs_ocr` instead of being sent to the model.
+- CI status badge, `/health` in the README endpoint table, ADR 0002 (FastAPI + SQLite + BM25).
+
+### Changed
+- Claude Code merges its own PRs once required checks pass; live API runs stay with Neo.
 
 ### Fixed
 - Verifier compared numbers as substrings, so "4 seconds" passed on a slide saying "0.42 seconds".
   Numbers now compare by value, sign, and unit; terms match whole words.
 - Verifier now handles superscripts, unicode ligatures and dashes, simple LaTeX, and `5 ms` vs `5ms`.
 - Facts inside visuals are now verified, and citations of blank slides fail.
-### Changed
-- Claude Code merges its own PRs once required checks pass; live API runs stay with Neo.
-
-### Added
-- CI status badge, `/health` in the README endpoint table, ADR 0002 (FastAPI + SQLite + BM25).
-
-### Changed
-- Documented that visual contents are not verified yet; added the fix to Phase 1.
+- Missing or corrupt files give a clear error instead of a raw library crash.
 
 ## [0.0.0] — 2026-10-30
 ### Added
