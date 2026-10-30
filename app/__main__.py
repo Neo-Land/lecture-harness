@@ -47,7 +47,15 @@ def main(argv: list[str] | None = None, llm=None, judge=None, store: Store | Non
             llm, judge = make_llm(cfg)
         store = store or Store(cfg.db_path)
         if args.command == "ingest":
-            result = ingest_file(args.file, args.course, store, llm, judge, max_revisions=cfg.max_revisions)
+            result = ingest_file(
+                args.file,
+                args.course,
+                store,
+                llm,
+                judge,
+                max_revisions=cfg.max_revisions,
+                images_dir=cfg.images_dir,
+            )
             print(json.dumps(result, indent=2))
             return 0
         answer = ask_course(args.course, args.question, store, llm, judge)

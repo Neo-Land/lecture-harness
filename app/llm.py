@@ -9,8 +9,13 @@ from .config import settings
 from .models import Answer, Claim, Deck, Issue, Slide, Summary
 from .retrieval import tokenize
 
+PROMPT_VERSION = "1"  # bump whenever SUMMARY_RULES, ANSWER_RULES, or the judge prompt change
+
 
 class LLM(Protocol):
+    model_id: str
+    prompt_version: str
+
     def summarize(self, deck: Deck, feedback: list[Issue]) -> Summary: ...
     def answer(self, question: str, slides: list[tuple[str, Slide]], feedback: list[Issue]) -> Answer: ...
 
@@ -40,24 +45,33 @@ def _format_feedback(feedback: list[Issue]) -> str:
     return f"\n\nFEEDBACK (previous attempt failed verification):\n{lines}"
 
 
+def _add_usage(totals: dict[str, int], resp) -> None:
+    totals["input_tokens"] += resp.usage.input_tokens
+    totals["output_tokens"] += resp.usage.output_tokens
+
+
 class ClaudeLLM:
     """Uses forced tool calls so output is always valid JSON matching our pydantic models."""
 
-    def __init__(self, model: str | None = None):
+    prompt_version = PROMPT_VERSION
+
+    def __init__(self, model: str | None = None, client=None):
         import anthropic  # imported lazily so tests don't need a key
 
-        self.client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
-        self.model = model or settings.model
+        self.client = client or anthropic.Anthropic(api_key=settings.anthropic_api_key)
+        self.model_id = model or settings.model
+        self.usage = {"input_tokens": 0, "output_tokens": 0}
 
     def _call(self, system: str, user: str, schema: dict, tool: str) -> dict:
         resp = self.client.messages.create(
-            model=self.model,
+            model=self.model_id,
             max_tokens=4000,
             system=system,
             tools=[{"name": tool, "description": "Submit the result.", "input_schema": schema}],
             tool_choice={"type": "tool", "name": tool},
             messages=[{"role": "user", "content": user}],
         )
+        _add_usage(self.usage, resp)
         return next(b.input for b in resp.content if b.type == "tool_use")
 
     def summarize(self, deck: Deck, feedback: list[Issue]) -> Summary:
@@ -76,20 +90,22 @@ class ClaudeLLM:
 class ClaudeJudge:
     """LLM-as-judge for paraphrased claims. Use a cheaper model than the writer."""
 
-    def __init__(self, model: str | None = None):
+    def __init__(self, model: str | None = None, client=None):
         import anthropic
 
-        self.client = anthropic.Anthropic(api_key=settings.anthropic_api_key)
-        self.model = model or settings.judge_model
+        self.client = client or anthropic.Anthropic(api_key=settings.anthropic_api_key)
+        self.model_id = model or settings.judge_model
+        self.usage = {"input_tokens": 0, "output_tokens": 0}
 
     def supports(self, claim: str, evidence: str) -> tuple[bool, str]:
         resp = self.client.messages.create(
-            model=self.model,
+            model=self.model_id,
             max_tokens=300,
             system="Decide if EVIDENCE fully supports CLAIM. Reply JSON only: "
             '{"supported": true|false, "reason": "..."}',
             messages=[{"role": "user", "content": f"EVIDENCE:\n{evidence}\n\nCLAIM:\n{claim}"}],
         )
+        _add_usage(self.usage, resp)
         try:
             out = json.loads(resp.content[0].text)
             return bool(out["supported"]), out.get("reason", "")
@@ -100,6 +116,9 @@ class ClaudeJudge:
 class ExtractiveLLM:
     """Offline stand-in that quotes slides, for running the app with no API key. Not AI: it never
     paraphrases, so its output says nothing about how the real model or the verifier perform."""
+
+    model_id = "extractive-offline"
+    prompt_version = "none"
 
     def summarize(self, deck: Deck, feedback: list[Issue]) -> Summary:
         slides = [s for s in deck.slides if s.text][:8]

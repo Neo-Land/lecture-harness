@@ -99,6 +99,9 @@ HALLUCINATED_SUMMARY = Summary(
 class FakeLLM:
     """Returns scripted outputs in order and records the feedback it received."""
 
+    model_id = "fake"
+    prompt_version = "test"
+
     def __init__(self, summaries=(), answers=()):
         self.summaries, self.answers = list(summaries), list(answers)
         self.feedback_seen: list[list] = []

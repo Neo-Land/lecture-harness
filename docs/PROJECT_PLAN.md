@@ -3,7 +3,7 @@
 **Goal:** a portfolio-ready agent harness that turns lecture slides into verified abstracts and
 visuals, with a web UI for per-course questions, backed by measured accuracy numbers.
 
-**Current phase:** Phase 2
+**Current phase:** Phase 3 (Phase 2's live run is waiting on Neo)
 
 ## How every phase runs
 - Work happens on branches, one PR per task group, merged by Claude Code after green CI (Neo's decision, 2026-10-30).
@@ -45,12 +45,13 @@ visuals, with a web UI for per-course questions, backed by measured accuracy num
 
 ## Phase 2 — Slide images + first real model run
 **Branches:** `feat/phase2-slide-images`, `feat/phase2-live-smoke`
-- [ ] Render each slide to PNG at ingest (PyMuPDF `get_pixmap`; PPTX via LibreOffice
+- [x] Render each slide to PNG at ingest (PyMuPDF `get_pixmap`; PPTX via LibreOffice
       if installed, otherwise text-only fallback). Endpoint: `GET /decks/{id}/slides/{n}/image`
-- [ ] `scripts/smoke_live.py`: runs one open-license deck through the real model and prints the
+- [x] `scripts/smoke_live.py`: runs one open-license deck through the real model and prints the
       verification report. **Neo runs this himself** with his key; Claude Code only writes it.
-- [ ] Prompt/version tracking: store model id + prompt version with every summary
-- [ ] Docs: `docs/RESULTS.md` with Neo's first live run (pasted by Neo), ADR on image rendering
+- [x] Prompt/version tracking: store model id + prompt version with every summary
+- [x] Docs: ADR on image rendering, `docs/RESULTS.md` instructions
+- [ ] Neo: run `scripts/smoke_live.py` and paste the result into `docs/RESULTS.md`
 
 **Done when:** one real lecture produces a passing, verified summary end to end.
 

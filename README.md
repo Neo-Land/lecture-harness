@@ -33,6 +33,8 @@ python -m app ask "What is merge sort's worst case?" --course "CS 2"
 Add `--offline` (or set `HARNESS_OFFLINE=true`) to run with no API key. Offline mode is not AI: it only
 quotes lines from the slides. Logs go to stderr as JSON lines, so stdout stays clean.
 
+Real-model check, which costs money: see [`docs/RESULTS.md`](docs/RESULTS.md).
+
 ## Layout
 
 ```
@@ -73,6 +75,7 @@ uvicorn app.api:app --reload    # http://localhost:8000/docs
 | `GET /courses`, `GET /courses/{course}/decks` | browse |
 | `GET /decks/{id}` | slides + verified summary + verification report |
 | `GET /decks/{id}/slides/{n}` | one slide (for citation links) |
+| `GET /decks/{id}/slides/{n}/image` | the slide as a PNG (PPTX needs LibreOffice installed) |
 | `POST /ask` `{course, question}` | grounded answer with sources |
 
 ## Project docs
@@ -86,7 +89,6 @@ uvicorn app.api:app --reload    # http://localhost:8000/docs
 
 - [ ] Golden eval set (5-10 decks with hand-written key points) -> report grounding %, coverage, hallucinations caught
 - [ ] Next.js frontend: course sidebar, lecture page (abstract + visuals + slides), ask box
-- [ ] Render slide images (`page.get_pixmap()`) so citations open the actual slide
 - [ ] Cache summaries by file hash; scheduled sync
 
 > Course slides are usually your professors' copyrighted material. Keep real files local

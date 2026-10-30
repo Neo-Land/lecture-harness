@@ -7,7 +7,7 @@ from pathlib import Path
 
 from .harness import answer_question, summarize_deck
 from .llm import LLM
-from .parsing import parse_file
+from .parsing import parse_file, render_images
 from .store import Store
 from .verifier import Judge
 
@@ -23,11 +23,18 @@ def ingest_file(
     deck_id: str | None = None,
     source_version: str | None = None,
     max_revisions: int = 2,
+    images_dir: Path | None = None,
 ) -> dict:
     deck = parse_file(path, course, deck_id)
+    if images_dir:
+        rendered = render_images(path, images_dir / deck.id)
+        for slide in deck.slides:
+            slide.has_image = slide.number in rendered
     store.save_deck(deck, source_version)
     result = summarize_deck(deck, llm, judge, max_revisions)
-    store.save_summary(deck.id, result.output, result.report, result.attempts)
+    store.save_summary(
+        deck.id, result.output, result.report, result.attempts, llm.model_id, llm.prompt_version
+    )
     store.save_trace("summary", deck.id, result.trace)
     return {
         "deck_id": deck.id,
@@ -84,6 +91,7 @@ def sync_canvas(
                     deck_id=deck_id,
                     source_version=version,
                     max_revisions=max_revisions,
+                    images_dir=files_dir.parent / "images",
                 )
             )
     return done
