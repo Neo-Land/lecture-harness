@@ -1,0 +1,36 @@
+reviewed = false  # Claude's draft. Neo sets true after checking each point against the slides.
+
+[[point]]
+text = "Strings are indexed with square brackets, and an out of bounds index is an error."
+slides = [5]
+keywords = ["index"]
+
+[[point]]
+text = "Strings can be sliced using [start:stop:step]."
+slides = [6]
+keywords = ["slice"]
+
+[[point]]
+text = "Strings are immutable and cannot be modified."
+slides = [7]
+keywords = ["immutable"]
+
+[[point]]
+text = "Guess-and-check, or exhaustive enumeration, guesses until it finds a solution or runs out of values."
+slides = [12]
+keywords = ["guess", "exhaustive enumeration"]
+
+[[point]]
+text = "Approximate solutions keep guessing until within epsilon; a smaller increment means a slower program."
+slides = [15]
+keywords = ["epsilon"]
+
+[[point]]
+text = "Bisection search halves the interval each iteration."
+slides = [17]
+keywords = ["bisection", "half"]
+
+[[point]]
+text = "Bisection converges on the order of log2N steps and needs a monotonic function."
+slides = [19]
+keywords = ["log2n"]

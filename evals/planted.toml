@@ -1,0 +1,409 @@
+# Claims with known answers, for measuring the verifier. Claude's draft, written from the eval decks.
+# expect_fail = false marks a true control claim, used to measure false alarms.
+reviewed = false
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "wrong_number"
+text = "The final is approx. 50% of the grade."
+slides = [3]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "wrong_number"
+text = "Turing showed you can compute anything using 8 primitives."
+slides = [16]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "wrong_number"
+text = "int(3.9) truncates the float to integer 4."
+slides = [26]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "wrong_number"
+text = "A computer has 200s of gigabytes of storage."
+slides = [9]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec2"
+kind = "wrong_number"
+text = "The example loops over range(5, 12, 2)."
+slides = [20]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec2"
+kind = "wrong_number"
+text = "The while loop runs while n < 6."
+slides = [18]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec3"
+kind = "wrong_number"
+text = "The example sets epsilon = 0.02."
+slides = [16]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec3"
+kind = "wrong_number"
+text = "The example uses increment = 0.001."
+slides = [16]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec3"
+kind = "wrong_number"
+text = "The example finds the root of cube = 64."
+slides = [16]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec4"
+kind = "wrong_number"
+text = "After the call, f returns 5."
+slides = [17]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec5"
+kind = "wrong_number"
+text = "L[2]+1 evaluates to 6."
+slides = [8]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec5"
+kind = "wrong_number"
+text = "After the update, L is now [2, 7, 3]."
+slides = [9]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "digit_fragment"
+text = "Problem sets are approx. 3% of the grade."
+slides = [3]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "digit_fragment"
+text = "Finger exercises are approx. 1% of the grade."
+slides = [3]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec3"
+kind = "digit_fragment"
+text = "The example finds the root of cube = 2."
+slides = [16]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec3"
+kind = "misplaced_number"
+text = "The example uses increment = 0.0."
+slides = [18]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "wrong_slide"
+text = "The final is approx. 40% of the grade."
+slides = [4]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec3"
+kind = "wrong_slide"
+text = "The example sets epsilon = 0.01."
+slides = [13]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec2"
+kind = "wrong_slide"
+text = "The example loops over range(5, 11, 2)."
+slides = [18]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec4"
+kind = "wrong_slide"
+text = "The example function is `is_even`."
+slides = [21]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec5"
+kind = "wrong_slide"
+text = "Clone a list with `chill = cool[:]`."
+slides = [19]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "nonexistent_slide"
+text = "Python was introduced in this course."
+slides = [99]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec3"
+kind = "nonexistent_slide"
+text = "Bisection search halves the interval."
+slides = [40]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec5"
+kind = "nonexistent_slide"
+text = "Lists are mutable."
+slides = [9, 77]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec5"
+kind = "wrong_term"
+text = "Add to the end of a list with `L.push()`."
+slides = [11]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec5"
+kind = "wrong_term"
+text = "Copy and sort a list with `sorted_copy()`."
+slides = [21]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec2"
+kind = "wrong_term"
+text = "A loop is written with `loop_while`."
+slides = [16]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "wrong_term"
+text = "A \"tokenizer\" executes each instruction in order."
+slides = [15]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec4"
+kind = "wrong_term"
+text = "The example function is `is_odd`."
+slides = [12]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec3"
+kind = "wrong_term"
+text = "The technique is called \"binary partition\"."
+slides = [17]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec5"
+kind = "misplaced_number"
+text = "L[2]+1 evaluates to 4."
+slides = [8]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec5"
+kind = "misplaced_number"
+text = "len(L) evaluates to 2."
+slides = [8]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "misplaced_number"
+text = "The quiz is approx. 40% and the final approx. 20% of the grade."
+slides = [3]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec4"
+kind = "misplaced_number"
+text = "After the call, f returns 3."
+slides = [17]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec5"
+kind = "unsupported_paraphrase"
+text = "Lists are always faster than tuples."
+slides = [7]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec2"
+kind = "unsupported_paraphrase"
+text = "While loops are always slower than for loops."
+slides = [23]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec3"
+kind = "unsupported_paraphrase"
+text = "Bisection search works on any function."
+slides = [19]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec4"
+kind = "unsupported_paraphrase"
+text = "Using global variables is recommended."
+slides = [25]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec3"
+kind = "unsupported_paraphrase"
+text = "Strings can be modified in place."
+slides = [7]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "unsupported_paraphrase"
+text = "Recitations are mandatory."
+slides = [5]
+expect_fail = true
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "control"
+text = "The final is approx. 40% of the grade."
+slides = [3]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "control"
+text = "Turing showed you can compute anything using 6 primitives."
+slides = [16]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "control"
+text = "int(3.9) truncates float 3.9 to integer 3."
+slides = [26]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec1"
+kind = "control"
+text = "float(3) converts integer 3 to float 3.0."
+slides = [26]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec2"
+kind = "control"
+text = "The example loops over `range(5, 11, 2)`."
+slides = [20]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec2"
+kind = "control"
+text = "The default values are start = 0 and step = 1."
+slides = [20]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec2"
+kind = "control"
+text = "break exits only the innermost loop."
+slides = [21]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec3"
+kind = "control"
+text = "s[3:6] evaluates to \"def\"."
+slides = [6]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec3"
+kind = "control"
+text = "The example sets epsilon = 0.01 and increment = 0.0001."
+slides = [16]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec3"
+kind = "control"
+text = "Bisection converges on the order of log2N steps."
+slides = [19]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec3"
+kind = "control"
+text = "For s = \"abc\", len(s) evaluates to 3."
+slides = [4]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec4"
+kind = "control"
+text = "Python returns the value None if no return is given."
+slides = [19]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec4"
+kind = "control"
+text = "The example function is `is_even`."
+slides = [12]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec4"
+kind = "control"
+text = "A function has 0 or more parameters."
+slides = [11]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec5"
+kind = "control"
+text = "`L.sort()` mutates the list."
+slides = [15]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec5"
+kind = "control"
+text = "L[2]+1 evaluates to 5 and len(L) evaluates to 4."
+slides = [8]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec5"
+kind = "control"
+text = "Clone a list with `chill = cool[:]`."
+slides = [20]
+expect_fail = false
+
+[[claim]]
+deck = "mit6_0001_lec5"
+kind = "control"
+text = "L[1] = 5 changes L to [2, 5, 3]."
+slides = [9]
+expect_fail = false

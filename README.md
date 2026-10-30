@@ -34,6 +34,7 @@ Add `--offline` (or set `HARNESS_OFFLINE=true`) to run with no API key. Offline 
 quotes lines from the slides. Logs go to stderr as JSON lines, so stdout stays clean.
 
 Real-model check, which costs money: see [`docs/RESULTS.md`](docs/RESULTS.md).
+Evaluation: `python -m evals.run` (offline, free), explained in [`docs/EVALS.md`](docs/EVALS.md).
 
 ## Layout
 
@@ -87,7 +88,6 @@ uvicorn app.api:app --reload    # http://localhost:8000/docs
 
 ## Next steps
 
-- [ ] Golden eval set (5-10 decks with hand-written key points) -> report grounding %, coverage, hallucinations caught
 - [ ] Next.js frontend: course sidebar, lecture page (abstract + visuals + slides), ask box
 - [ ] Cache summaries by file hash; scheduled sync
 

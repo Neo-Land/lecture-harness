@@ -1,0 +1,46 @@
+reviewed = false  # Claude's draft. Neo sets true after checking each point against the slides.
+
+[[point]]
+text = "Strings are sequences of characters in quotes and can be concatenated."
+slides = [4]
+keywords = ["string", "concatenate"]
+
+[[point]]
+text = "input returns a string, so it must be cast to work with numbers."
+slides = [6]
+keywords = ["input", "cast"]
+
+[[point]]
+text = "Comparison operators evaluate to a Boolean, and == tests equality."
+slides = [7]
+keywords = ["boolean"]
+
+[[point]]
+text = "Branching uses if, elif, and else."
+slides = [11]
+keywords = ["if", "else"]
+
+[[point]]
+text = "Indentation matters in Python: it denotes blocks of code."
+slides = [12]
+keywords = ["indentation"]
+
+[[point]]
+text = "A while loop repeats its block until its condition is False."
+slides = [16]
+keywords = ["while", "false"]
+
+[[point]]
+text = "range(start, stop, step) defaults to start 0 and step 1, and loops until stop - 1."
+slides = [20]
+keywords = ["range", "stop"]
+
+[[point]]
+text = "break exits only the innermost loop."
+slides = [21]
+keywords = ["break", "innermost"]
+
+[[point]]
+text = "for loops know the number of iterations; while loops can run an unbounded number."
+slides = [23]
+keywords = ["for", "while", "unbounded"]
