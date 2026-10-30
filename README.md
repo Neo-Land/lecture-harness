@@ -1,5 +1,7 @@
 # Lecture Harness
 
+[![CI](https://github.com/Neo-Land/lecture-harness/actions/workflows/ci.yml/badge.svg)](https://github.com/Neo-Land/lecture-harness/actions/workflows/ci.yml)
+
 An agent harness that pulls new lecture slides from your LMS, writes an abstract and
 structured visuals, and **verifies every claim against the slides it cites** before
 showing it to you. Ask questions per course and get answers with clickable slide citations.
@@ -52,6 +54,7 @@ uvicorn app.api:app --reload    # http://localhost:8000/docs
 
 | Endpoint | Purpose |
 |---|---|
+| `GET /health` | liveness check |
 | `POST /upload` (form: `course`, `file`) | add a PDF/PPTX manually |
 | `POST /sync` | pull new/changed files from Canvas |
 | `GET /courses`, `GET /courses/{course}/decks` | browse |

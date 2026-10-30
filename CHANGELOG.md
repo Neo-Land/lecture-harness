@@ -3,6 +3,11 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Added
+- CI status badge, `/health` in the README endpoint table, ADR 0002 (FastAPI + SQLite + BM25).
+
+### Changed
+- Documented that visual contents are not verified yet; added the fix to Phase 1.
 
 ## [0.0.0] — 2026-10-30
 ### Added
