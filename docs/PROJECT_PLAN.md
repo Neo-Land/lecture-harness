@@ -3,10 +3,10 @@
 **Goal:** a portfolio-ready agent harness that turns lecture slides into verified abstracts and
 visuals, with a web UI for per-course questions, backed by measured accuracy numbers.
 
-**Current phase:** Phase 0
+**Current phase:** Phase 1
 
 ## How every phase runs
-- Work happens on branches, one PR per task group, merged by Neo after green CI.
+- Work happens on branches, one PR per task group, merged by Claude Code after green CI (Neo's decision, 2026-10-30).
 - Each phase ends with: all tasks ticked, docs updated, CI green on `main`, a git tag
   (`v0.<phase>.0`), and a "Phase N" entry in `CHANGELOG.md`.
 - Expect **3–6 pushes per phase** (push at the end of every task, not once at the end).
@@ -17,15 +17,15 @@ visuals, with a web UI for per-course questions, backed by measured accuracy num
 
 ## Phase 0 — Repo, CI, and guardrails
 **Branch:** `ci/phase0-setup` · **Tag:** `v0.0.0`
-- [ ] Neo: create GitHub repo, push scaffold, set branch protection (see `SETUP_ACCESS.md`)
+- [x] Neo: create GitHub repo, push scaffold, set branch protection (see `SETUP_ACCESS.md`)
 - [x] Add `ruff` config to `pyproject.toml`; fix all lint/format issues
 - [x] Add `pytest-cov`; make CI enforce coverage ≥ 85%
-- [ ] Confirm `.github/workflows/ci.yml` runs on PRs and pushes to `main` (Python 3.11 + 3.13)
+- [x] Confirm `.github/workflows/ci.yml` runs on PRs and pushes to `main` (Python 3.11 + 3.13)
 - [x] Add Dependabot config for pip and GitHub Actions (weekly)
-- [ ] Add CI status badge to `README.md`
-- [ ] Docs: verify `ARCHITECTURE.md` matches the code; write ADR 0002 (FastAPI + SQLite + BM25 to start)
+- [x] Add CI status badge to `README.md`
+- [x] Docs: verify `ARCHITECTURE.md` matches the code; write ADR 0002 (FastAPI + SQLite + BM25 to start)
 
-**Done when:** a PR shows the `backend` check passing and `main` is protected.
+**Done when:** a PR shows the `backend (3.11)` and `backend (3.13)` checks passing and `main` is protected.
 
 ## Phase 1 — Harden the backend
 **Branches:** `feat/phase1-verifier-edge-cases`, `feat/phase1-robustness`, `feat/phase1-cli`

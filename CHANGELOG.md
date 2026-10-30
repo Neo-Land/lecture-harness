@@ -3,6 +3,9 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Changed
+- Claude Code merges its own PRs once required checks pass; live API runs stay with Neo.
+
 ### Added
 - CI status badge, `/health` in the README endpoint table, ADR 0002 (FastAPI + SQLite + BM25).
 
