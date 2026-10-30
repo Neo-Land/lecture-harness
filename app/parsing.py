@@ -7,6 +7,7 @@ import logging
 import shutil
 import subprocess
 import tempfile
+from collections import Counter
 from pathlib import Path
 
 import pymupdf as fitz
@@ -55,6 +56,22 @@ def parse_pptx(path: Path) -> list[Slide]:
     return slides
 
 
+def _strip_boilerplate(slides: list[Slide]) -> list[Slide]:
+    """Remove page numbers and any line repeated on most slides (footers). Left in, their numbers
+    count as evidence: a wrong "9" would pass verification on page 9."""
+    if len(slides) < 3:
+        return slides
+    counts = Counter(ln for s in slides for ln in set(s.text.splitlines()))
+    repeated = {ln for ln, n in counts.items() if n > len(slides) / 2}
+    return [
+        _slide(
+            s.number - 1,
+            "\n".join(ln for ln in s.text.splitlines() if ln not in repeated and ln != str(s.number)),
+        )
+        for s in slides
+    ]
+
+
 def parse_file(path: Path, course: str, deck_id: str | None = None) -> Deck:
     ext = path.suffix.lower()
     if ext not in SUPPORTED:
@@ -65,6 +82,7 @@ def parse_file(path: Path, course: str, deck_id: str | None = None) -> Deck:
         slides = parse_pdf(path) if ext == ".pdf" else parse_pptx(path)
     except Exception as err:  # the PDF and PPTX libraries raise many unrelated types on bad files
         raise ValueError(f"Could not read {path.name}: not a valid {ext} file") from err
+    slides = _strip_boilerplate(slides)
     return Deck(id=deck_id or file_hash(path), course=course, title=path.stem, slides=slides)
 
 

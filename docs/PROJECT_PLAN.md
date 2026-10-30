@@ -3,7 +3,7 @@
 **Goal:** a portfolio-ready agent harness that turns lecture slides into verified abstracts and
 visuals, with a web UI for per-course questions, backed by measured accuracy numbers.
 
-**Current phase:** Phase 3 (Phase 2's live run is waiting on Neo)
+**Current phase:** Phase 4 (live runs in Phases 2 and 3 are waiting on Neo)
 
 ## How every phase runs
 - Work happens on branches, one PR per task group, merged by Claude Code after green CI (Neo's decision, 2026-10-30).
@@ -57,18 +57,19 @@ visuals, with a web UI for per-course questions, backed by measured accuracy num
 
 ## Phase 3 — Evaluation suite (your resume numbers)
 **Branches:** `feat/phase3-golden-set`, `feat/phase3-eval-runner`, `ci/phase3-eval-workflow`
-- [ ] Golden set: 5–10 decks from openly licensed courseware (e.g. MIT OpenCourseWare, CC BY-NC-SA),
-      stored in `evals/decks/` with a `SOURCES.md` attribution file
-- [ ] For each deck, hand-written `evals/golden/<deck>.yaml`: key points + slide numbers
-      (**Neo writes or reviews these**; they define ground truth)
-- [ ] Planted-error set: summaries with known mistakes, to measure what the verifier catches
-- [ ] `python -m evals.run` computing:
+- [x] Golden set: 5 decks from MIT OpenCourseWare (CC BY-NC-SA), downloaded with checksums rather than
+      committed (see ADR 0004), with a `SOURCES.md` attribution file
+- [x] For each deck, `evals/golden/<deck>.toml`: key points + slide numbers, drafted by Claude
+- [ ] Neo: review the golden and planted sets, then set `reviewed = true` in each file
+- [x] Planted-error set: summaries with known mistakes, to measure what the verifier catches
+- [x] `python -m evals.run` computing:
       grounding rate (claims passing), coverage (golden points captured),
       verifier recall on planted errors, revisions per deck, cost per deck
-- [ ] Offline mode (fake model, runs in normal CI) + live mode
-- [ ] `.github/workflows/eval.yml`: **manual trigger only** (`workflow_dispatch`), uses the
+- [x] Offline mode (fake model, runs in normal CI) + live mode
+- [x] `.github/workflows/eval.yml`: **manual trigger only** (`workflow_dispatch`), uses the
       `ANTHROPIC_API_KEY` secret, uploads the report as an artifact
-- [ ] Docs: `docs/EVALS.md` (method, results table, how to reproduce), ADR on metrics
+- [x] Docs: `docs/EVALS.md` (method, offline results, how to reproduce), ADR on metrics
+- [ ] Neo: run `python -m evals.run --live --max-usd 1` and add the numbers to `docs/EVALS.md`
 
 **Done when:** `EVALS.md` has real numbers from a live run.
 

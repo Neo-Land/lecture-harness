@@ -1,0 +1,46 @@
+reviewed = false  # Claude's draft. Neo sets true after checking each point against the slides.
+
+[[point]]
+text = "Tuples are ordered, can mix element types, and are immutable."
+slides = [4]
+keywords = ["tuple", "immutable"]
+
+[[point]]
+text = "Tuples can swap variable values and return more than one value from a function."
+slides = [5]
+keywords = ["swap"]
+
+[[point]]
+text = "Lists are ordered sequences accessible by index, denoted by square brackets."
+slides = [7]
+keywords = ["list", "index"]
+
+[[point]]
+text = "Lists are mutable: assigning to an index changes the same object."
+slides = [9]
+keywords = ["mutable"]
+
+[[point]]
+text = "append mutates a list; + makes a new list; extend mutates with another list."
+slides = [11, 12]
+keywords = ["append"]
+
+[[point]]
+text = "An alias means two names point to one list, so changing one changes the other."
+slides = [17, 19]
+keywords = ["alias"]
+
+[[point]]
+text = "Cloning creates a new list that copies every element, using [:]."
+slides = [20]
+keywords = ["clon"]
+
+[[point]]
+text = "sort() mutates the list and returns nothing; sorted() does not mutate."
+slides = [21]
+keywords = ["sort", "mutate"]
+
+[[point]]
+text = "Avoid mutating a list while iterating over it."
+slides = [23]
+keywords = ["mutating", "iterating"]

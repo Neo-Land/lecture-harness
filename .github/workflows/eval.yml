@@ -1,0 +1,37 @@
+name: Eval
+
+on:
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "offline is free; live costs money"
+        type: choice
+        options: [offline, live]
+        default: offline
+      max_usd:
+        description: "Live budget stop in USD"
+        default: "1"
+
+permissions:
+  contents: read
+
+jobs:
+  eval:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+          cache: pip
+      - run: pip install -r requirements.txt
+      - name: Run evals
+        env:
+          ANTHROPIC_API_KEY: ${{ inputs.mode == 'live' && secrets.ANTHROPIC_API_KEY || '' }}
+          MODE_FLAG: ${{ inputs.mode == 'live' && '--live' || '' }}
+          MAX_USD: ${{ inputs.max_usd }}
+        run: python -m evals.run $MODE_FLAG --max-usd "$MAX_USD"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: eval-report
+          path: evals/reports/

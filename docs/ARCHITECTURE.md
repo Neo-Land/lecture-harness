@@ -42,7 +42,11 @@ LMS/upload ─► parsing.py ─► store.py ─► harness.py ─────�
 Ingest renders each slide to `data/images/<deck>/<n>.png` as a best-effort step (see ADR 0003). Every
 summary records the model id and prompt version that produced it.
 
-## Scanned slides
+## Evals
+`evals/` measures the harness and is never imported by `app/`. See `docs/EVALS.md`.
+
+## Scanned slides and footers
+Repeated footers and page numbers are removed at parsing so they can't count as evidence.
 A slide with no extractable text is flagged `needs_ocr`. Citing it fails verification, and a fully
 scanned deck skips the model call entirely and stores an empty summary.
 

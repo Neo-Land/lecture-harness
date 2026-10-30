@@ -4,6 +4,13 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 ### Added
+- Evaluation suite: 5 MIT OCW decks, draft golden sets, a planted-error set, `python -m evals.run`,
+  and a manual GitHub workflow with a budget stop.
+
+### Fixed
+- Footers and page numbers no longer count as evidence for claims.
+
+### Added
 - Slide images rendered at ingest, served at `GET /decks/{id}/slides/{n}/image`.
 - Model id and prompt version stored with every summary; token usage tracked per client.
 - `scripts/smoke_live.py` for one real-model run (run by Neo, costs money).

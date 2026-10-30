@@ -1,0 +1,41 @@
+reviewed = false  # Claude's draft. Neo sets true after checking each point against the slides.
+
+[[point]]
+text = "Functions are the mechanism for achieving decomposition and abstraction."
+slides = [5]
+keywords = ["decomposition", "abstraction"]
+
+[[point]]
+text = "Decomposition divides code into self-contained, reusable modules."
+slides = [9]
+keywords = ["decomposition", "modules"]
+
+[[point]]
+text = "Abstraction treats a piece of code as a black box that hides its details."
+slides = [10]
+keywords = ["black box"]
+
+[[point]]
+text = "Functions do not run until they are called or invoked."
+slides = [11]
+keywords = ["function", "called"]
+
+[[point]]
+text = "Calling a function creates a new scope that maps names to objects."
+slides = [14]
+keywords = ["scope"]
+
+[[point]]
+text = "Python returns None when a function has no return statement."
+slides = [19]
+keywords = ["none", "return"]
+
+[[point]]
+text = "return only has meaning inside a function, unlike print."
+slides = [20]
+keywords = ["return", "print"]
+
+[[point]]
+text = "Inside a function you can access but not modify a variable defined outside."
+slides = [25, 26]
+keywords = ["access", "modify"]

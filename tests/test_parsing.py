@@ -1,6 +1,7 @@
 import pytest
 
-from app.parsing import parse_file
+from app.models import Slide
+from app.parsing import _strip_boilerplate, parse_file
 
 
 def test_pdf_slides_are_numbered_and_keep_text(pdf_file):
@@ -36,3 +37,9 @@ def test_corrupt_file_is_a_clear_error(tmp_path, name):
     f.write_bytes(b"not really a document")
     with pytest.raises(ValueError, match="Could not read"):
         parse_file(f, "CS 2")
+
+
+def test_footers_and_page_numbers_do_not_count_as_evidence():
+    slides = [Slide(number=i, text=f"Topic {i * 11}\nCS 101 LECTURE 1\n{i}") for i in range(1, 5)]
+    cleaned = _strip_boilerplate(slides)
+    assert cleaned[1].text == "Topic 22"
