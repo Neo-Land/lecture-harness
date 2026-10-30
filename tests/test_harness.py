@@ -1,5 +1,5 @@
 from app.harness import answer_question, summarize_deck
-from app.models import Answer, Claim
+from app.models import Answer, Claim, Summary, VisualSpec
 from tests.conftest import GOOD_SUMMARY, HALLUCINATED_SUMMARY, FakeJudge, FakeLLM
 
 
@@ -43,3 +43,12 @@ def test_answer_hallucination_is_removed(sorting_deck):
     llm = FakeLLM(answers=[bad, bad])
     result, _ = answer_question("quick sort", [sorting_deck], llm, judge=FakeJudge("always faster"))
     assert result.output.claims == [] and result.output.insufficient_evidence
+
+
+def test_out_of_retries_drops_failing_visual_but_keeps_good_one(sorting_deck):
+    data = {"columns": ["Time"], "rows": [["0.42"]]}
+    good = VisualSpec(kind="table", title="Good", data=data, slides=[4])
+    bad = VisualSpec(kind="table", title="Bad", data={"columns": ["Time"], "rows": [["0.9"]]}, slides=[4])
+    summary = Summary(abstract=[], visuals=[good, bad])
+    result = summarize_deck(sorting_deck, FakeLLM(summaries=[summary] * 2), max_revisions=1)
+    assert [v.title for v in result.output.visuals] == ["Good"]

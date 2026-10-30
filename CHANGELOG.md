@@ -3,6 +3,11 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- Verifier compared numbers as substrings, so "4 seconds" passed on a slide saying "0.42 seconds".
+  Numbers now compare by value, sign, and unit; terms match whole words.
+- Verifier now handles superscripts, unicode ligatures and dashes, simple LaTeX, and `5 ms` vs `5ms`.
+- Facts inside visuals are now verified, and citations of blank slides fail.
 ### Changed
 - Claude Code merges its own PRs once required checks pass; live API runs stay with Neo.
 

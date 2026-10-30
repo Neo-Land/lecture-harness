@@ -49,7 +49,8 @@ def summarize_deck(deck: Deck, llm: LLM, judge: Judge | None = None, max_revisio
 
     # Out of retries: never ship an unverified claim. Keep only what passed.
     summary.abstract = _drop_failed(summary.abstract, report)
-    summary.visuals = [v for v in summary.visuals if all(deck.slide(n) for n in v.slides)]
+    bad = {i.claim for i in report.issues}
+    summary.visuals = [v for v in summary.visuals if f"[visual] {v.title}" not in bad]
     return RunResult(summary, report, attempt, trace)
 
 
