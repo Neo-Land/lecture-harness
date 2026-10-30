@@ -31,9 +31,15 @@ LMS/upload ─► parsing.py ─► store.py ─► harness.py ─────�
 2. A claim is shown only if it passes the verifier; after `max_revisions`, failing claims are dropped.
 3. Answers cite renumbered context slides that are mapped back to real `(deck, slide)` pairs, so
    the model can only cite slides it was shown.
-4. Visuals are checked for valid slide citations only; the facts inside `VisualSpec.data` are not
-   verified yet (known gap, tracked in Phase 1).
+4. Visuals go through the same checks as claims and are dropped if they still fail. Numbers pool
+   across a visual's cells, so only the judge can catch a right number in the wrong cell.
 5. LMS files are processed once per version (`source_version` = Canvas `updated_at`).
+
+## How facts are compared
+Slide text and claims are normalized first (unicode, superscripts, LaTeX, dashes, thousands separators,
+spacing). Numbers then compare by value and sign, so `4` never matches inside `0.42`, and `3.5` equals
+`3.50`. A unit must match unless the slide shows the number bare, since a table header may hold it.
+Quoted terms and `code` must match whole words.
 
 ## Endpoints
 See `README.md` → Endpoints. Interactive docs at `/docs` when the server runs.
