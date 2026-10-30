@@ -31,7 +31,9 @@ LMS/upload ─► parsing.py ─► store.py ─► harness.py ─────�
 2. A claim is shown only if it passes the verifier; after `max_revisions`, failing claims are dropped.
 3. Answers cite renumbered context slides that are mapped back to real `(deck, slide)` pairs, so
    the model can only cite slides it was shown.
-4. LMS files are processed once per version (`source_version` = Canvas `updated_at`).
+4. Visuals are checked for valid slide citations only; the facts inside `VisualSpec.data` are not
+   verified yet (known gap, tracked in Phase 1).
+5. LMS files are processed once per version (`source_version` = Canvas `updated_at`).
 
 ## Endpoints
 See `README.md` → Endpoints. Interactive docs at `/docs` when the server runs.

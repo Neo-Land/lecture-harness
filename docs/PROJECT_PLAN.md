@@ -32,6 +32,7 @@ visuals, with a web UI for per-course questions, backed by measured accuracy num
 - [ ] Verifier edge cases, each with a test first:
   superscripts/unicode (`O(n²)` vs `O(n^2)`), units (`5 ms` vs `5ms`), ranges, negative numbers,
   numbers inside words (`CS2`), LaTeX-ish formulas, multi-slide citations
+- [ ] Verify facts inside `VisualSpec.data` (numbers, terms) against cited slides, not just the citations
 - [ ] Unit test for `Store` (round trips, `is_current`, course listing)
 - [ ] Config validation on startup with clear errors (missing key, bad data dir)
 - [ ] Structured logging (JSON lines) for every harness attempt: deck, attempt, supported/total
