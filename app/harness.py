@@ -31,17 +31,26 @@ def _drop_failed(claims: list[Claim], report: VerificationReport) -> list[Claim]
 
 
 def summarize_deck(deck: Deck, llm: LLM, judge: Judge | None = None, max_revisions: int = 2) -> RunResult:
+    if not any(
+        s.text for s in deck.slides
+    ):  # fully scanned: nothing to ground claims in, don't pay for a call
+        log.info("deck_needs_ocr", extra={"deck": deck.id})
+        return RunResult(Summary(abstract=[]), VerificationReport(passed=True), 0)
+
     feedback, trace = [], []
     for attempt in range(1, max_revisions + 2):
         summary = llm.summarize(deck, feedback)
         report = verify_summary(summary, deck, judge)
-        trace.append({"attempt": attempt, "report": report.model_dump()})
+        trace.append({"attempt": attempt, "output": summary.model_dump(), "report": report.model_dump()})
         log.info(
-            "deck=%s attempt=%d supported=%d/%d",
-            deck.id,
-            attempt,
-            report.claims_supported,
-            report.claims_total,
+            "harness_attempt",
+            extra={
+                "deck": deck.id,
+                "attempt": attempt,
+                "supported": report.claims_supported,
+                "total": report.claims_total,
+                "issues": len(report.issues),
+            },
         )
         if report.passed:
             return RunResult(summary, report, attempt, trace)
@@ -84,8 +93,9 @@ def answer_question(
     for attempt in range(1, max_revisions + 2):
         ans = llm.answer(question, labeled, feedback)
         report = verify_claims(ans.claims, context, judge)
-        trace.append({"attempt": attempt, "report": report.model_dump()})
+        trace.append({"attempt": attempt, "output": ans.model_dump(), "report": report.model_dump()})
         if report.passed:
+            ans.insufficient_evidence = ans.insufficient_evidence or not ans.claims
             return RunResult(ans, report, attempt, trace), citations
         feedback = report.issues
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from .harness import summarize_deck
+from .harness import answer_question, summarize_deck
 from .llm import LLM
 from .parsing import parse_file
 from .store import Store
@@ -28,12 +28,31 @@ def ingest_file(
     store.save_deck(deck, source_version)
     result = summarize_deck(deck, llm, judge, max_revisions)
     store.save_summary(deck.id, result.output, result.report, result.attempts)
+    store.save_trace("summary", deck.id, result.trace)
     return {
         "deck_id": deck.id,
         "title": deck.title,
         "attempts": result.attempts,
         "supported": result.report.claims_supported,
         "total": result.report.claims_total,
+        "needs_ocr": [s.number for s in deck.slides if s.needs_ocr],
+    }
+
+
+def ask_course(course: str, question: str, store: Store, llm: LLM, judge: Judge | None) -> dict | None:
+    """Answer a question from a course's slides, or None if the course has no lectures yet."""
+    decks = store.decks_for_course(course)
+    if not decks:
+        return None
+    result, cites = answer_question(question, decks, llm, judge)
+    store.save_trace("ask", course, result.trace)
+    return {
+        "insufficient_evidence": result.output.insufficient_evidence,
+        "claims": [
+            {"text": c.text, "sources": [vars(cites[n]) for n in c.slides if n in cites]}
+            for c in result.output.claims
+        ],
+        "report": result.report.model_dump(),
     }
 
 

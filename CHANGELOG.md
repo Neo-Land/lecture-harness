@@ -3,6 +3,11 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Added
+- CLI: `python -m app ingest` and `ask`, with an `--offline` mode that needs no API key.
+- Startup config validation, JSON-lines logging, and stored traces of every harness attempt.
+- Scanned slides are flagged `needs_ocr` instead of being sent to the model.
+
 ### Fixed
 - Verifier compared numbers as substrings, so "4 seconds" passed on a slide saying "0.42 seconds".
   Numbers now compare by value, sign, and unit; terms match whole words.

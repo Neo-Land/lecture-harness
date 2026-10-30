@@ -23,6 +23,16 @@ LMS sync ─► parse slides ─► model writes JSON summary ─► verifier �
 If a claim still fails after the revision budget, it's **dropped**, never shown.
 Questions with no supporting slides return `insufficient_evidence: true` instead of a guess.
 
+## Command line
+
+```bash
+python -m app ingest lecture7.pdf --course "CS 2"
+python -m app ask "What is merge sort's worst case?" --course "CS 2"
+```
+
+Add `--offline` (or set `HARNESS_OFFLINE=true`) to run with no API key. Offline mode is not AI: it only
+quotes lines from the slides. Logs go to stderr as JSON lines, so stdout stays clean.
+
 ## Layout
 
 ```
@@ -37,6 +47,9 @@ app/
   pipeline.py   sync new/changed files and run them through the harness
   lms/canvas.py Canvas REST client (personal access token)
   api.py        FastAPI endpoints for the frontend
+  __main__.py   command line (ingest, ask)
+  logs.py       JSON-lines logging
+  config.py     settings and startup validation
 tests/          runs offline with a scripted fake model
 ```
 
