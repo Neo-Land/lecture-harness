@@ -15,7 +15,8 @@ CREATE TABLE IF NOT EXISTS decks (
 );
 CREATE TABLE IF NOT EXISTS summaries (
     deck_id TEXT PRIMARY KEY REFERENCES decks(id), body TEXT NOT NULL,
-    report TEXT NOT NULL, attempts INTEGER NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    report TEXT NOT NULL, attempts INTEGER NOT NULL, model TEXT NOT NULL, prompt_version TEXT NOT NULL,
+    created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS traces (
     id INTEGER PRIMARY KEY, kind TEXT NOT NULL, subject TEXT NOT NULL,
@@ -61,20 +62,36 @@ class Store:
         return bool(row) and row[0] == source_version
 
     # ---- summaries ---------------------------------------------------------
-    def save_summary(self, deck_id: str, summary: Summary, report: VerificationReport, attempts: int) -> None:
+    def save_summary(
+        self,
+        deck_id: str,
+        summary: Summary,
+        report: VerificationReport,
+        attempts: int,
+        model: str = "unknown",
+        prompt_version: str = "unknown",
+    ) -> None:
+        """Store the latest summary with the model and prompt that produced it."""
         self.db.execute(
-            "INSERT OR REPLACE INTO summaries (deck_id, body, report, attempts) VALUES (?,?,?,?)",
-            (deck_id, summary.model_dump_json(), report.model_dump_json(), attempts),
+            "INSERT OR REPLACE INTO summaries (deck_id, body, report, attempts, model, prompt_version) "
+            "VALUES (?,?,?,?,?,?)",
+            (deck_id, summary.model_dump_json(), report.model_dump_json(), attempts, model, prompt_version),
         )
         self.db.commit()
 
     def get_summary(self, deck_id: str) -> dict | None:
         row = self.db.execute(
-            "SELECT body, report, attempts FROM summaries WHERE deck_id=?", (deck_id,)
+            "SELECT body, report, attempts, model, prompt_version FROM summaries WHERE deck_id=?", (deck_id,)
         ).fetchone()
         if not row:
             return None
-        return {"summary": json.loads(row[0]), "report": json.loads(row[1]), "attempts": row[2]}
+        return {
+            "summary": json.loads(row[0]),
+            "report": json.loads(row[1]),
+            "attempts": row[2],
+            "model": row[3],
+            "prompt_version": row[4],
+        }
 
     # ---- traces ------------------------------------------------------------
     def save_trace(self, kind: str, subject: str, trace: list[dict]) -> None:

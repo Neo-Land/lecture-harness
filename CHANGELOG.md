@@ -3,6 +3,10 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Added
+- Slide images rendered at ingest, served at `GET /decks/{id}/slides/{n}/image`.
+- Model id and prompt version stored with every summary; token usage tracked per client.
+- `scripts/smoke_live.py` for one real-model run (run by Neo, costs money).
 
 ## [0.1.0] — 2026-10-30
 ### Added

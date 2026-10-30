@@ -38,6 +38,10 @@ LMS/upload ─► parsing.py ─► store.py ─► harness.py ─────�
    across a visual's cells, so only the judge can catch a right number in the wrong cell.
 5. LMS files are processed once per version (`source_version` = Canvas `updated_at`).
 
+## Slide images
+Ingest renders each slide to `data/images/<deck>/<n>.png` as a best-effort step (see ADR 0003). Every
+summary records the model id and prompt version that produced it.
+
 ## Scanned slides
 A slide with no extractable text is flagged `needs_ocr`. Citing it fails verification, and a fully
 scanned deck skips the model call entirely and stores an empty summary.

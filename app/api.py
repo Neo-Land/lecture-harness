@@ -7,6 +7,7 @@ from pathlib import Path
 
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from .config import settings, validate_settings
@@ -55,6 +56,14 @@ def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
             raise HTTPException(404, "slide not found")
         return s.model_dump()
 
+    @app.get("/decks/{deck_id}/slides/{n}/image")
+    def slide_image(deck_id: str, n: int):
+        d = store.get_deck(deck_id)  # an id from the database, so never a path from the request
+        s = d.slide(n) if d else None
+        if not s or not s.has_image:
+            raise HTTPException(404, "no image for that slide")
+        return FileResponse(settings.images_dir / d.id / f"{n}.png", media_type="image/png")
+
     @app.post("/upload")
     def upload(course: str = Form(...), file: UploadFile = File(...)):
         """Manual upload: lets you use the app without Canvas access."""
@@ -66,7 +75,15 @@ def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
         with dest.open("wb") as fh:
             shutil.copyfileobj(file.file, fh)
         try:
-            return ingest_file(dest, course, store, llm, judge, max_revisions=settings.max_revisions)
+            return ingest_file(
+                dest,
+                course,
+                store,
+                llm,
+                judge,
+                max_revisions=settings.max_revisions,
+                images_dir=settings.images_dir,
+            )
         except ValueError as err:
             raise HTTPException(400, str(err)) from err
 

@@ -41,6 +41,10 @@ class Settings:
         return self.data_dir / "harness.db"
 
     @property
+    def images_dir(self) -> Path:
+        return self.data_dir / "images"
+
+    @property
     def files_dir(self) -> Path:
         return self.data_dir / "files"
 
