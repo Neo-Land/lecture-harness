@@ -6,7 +6,8 @@ import json
 from typing import Protocol
 
 from .config import settings
-from .models import Answer, Deck, Issue, Slide, Summary
+from .models import Answer, Claim, Deck, Issue, Slide, Summary
+from .retrieval import tokenize
 
 
 class LLM(Protocol):
@@ -29,7 +30,7 @@ set insufficient_evidence=true and return no claims. Never use outside knowledge
 
 
 def _format_slides(slides: list[tuple[str, Slide]]) -> str:
-    return "\n\n".join(f"[slide {s.number} | {deck}]\n{s.text}" for deck, s in slides)
+    return "\n\n".join(f"[slide {s.number} | {deck}]\n{s.text}" for deck, s in slides if s.text)
 
 
 def _format_feedback(feedback: list[Issue]) -> str:
@@ -94,3 +95,32 @@ class ClaudeJudge:
             return bool(out["supported"]), out.get("reason", "")
         except (json.JSONDecodeError, KeyError, IndexError):
             return False, "judge returned unparseable output"
+
+
+class ExtractiveLLM:
+    """Offline stand-in that quotes slides, for running the app with no API key. Not AI: it never
+    paraphrases, so its output says nothing about how the real model or the verifier perform."""
+
+    def summarize(self, deck: Deck, feedback: list[Issue]) -> Summary:
+        slides = [s for s in deck.slides if s.text][:8]
+        return Summary(abstract=[Claim(text=_longest_line(s.text), slides=[s.number]) for s in slides])
+
+    def answer(self, question: str, slides: list[tuple[str, Slide]], feedback: list[Issue]) -> Answer:
+        wanted = set(tokenize(question))
+        claims = []
+        for _, slide in slides[:3]:
+            matching = [ln for ln in slide.text.splitlines() if wanted & set(tokenize(ln))]
+            if matching:
+                claims.append(Claim(text=_longest_line("\n".join(matching)), slides=[slide.number]))
+        return Answer(claims=claims, insufficient_evidence=not claims)
+
+
+def _longest_line(text: str) -> str:
+    return max(text.splitlines(), key=len)
+
+
+def make_llm(cfg) -> tuple[LLM, object | None]:
+    """The model and judge for these settings. Offline mode has no judge."""
+    if cfg.offline:
+        return ExtractiveLLM(), None
+    return ClaudeLLM(), ClaudeJudge() if cfg.use_judge else None

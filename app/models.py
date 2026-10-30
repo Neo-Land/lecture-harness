@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 class Slide(BaseModel):
     number: int  # 1-based, matches what students see
     text: str
+    needs_ocr: bool = False  # no extractable text, e.g. a scanned page
 
 
 class Deck(BaseModel):

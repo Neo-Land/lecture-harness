@@ -3,7 +3,7 @@
 **Goal:** a portfolio-ready agent harness that turns lecture slides into verified abstracts and
 visuals, with a web UI for per-course questions, backed by measured accuracy numbers.
 
-**Current phase:** Phase 1
+**Current phase:** Phase 2
 
 ## How every phase runs
 - Work happens on branches, one PR per task group, merged by Claude Code after green CI (Neo's decision, 2026-10-30).
@@ -33,13 +33,13 @@ visuals, with a web UI for per-course questions, backed by measured accuracy num
   superscripts/unicode (`O(n²)` vs `O(n^2)`), units (`5 ms` vs `5ms`), ranges, negative numbers,
   numbers inside words (`CS2`), LaTeX-ish formulas, multi-slide citations
 - [x] Verify facts inside `VisualSpec.data` (numbers, terms) against cited slides, not just the citations
-- [ ] Unit test for `Store` (round trips, `is_current`, course listing)
-- [ ] Config validation on startup with clear errors (missing key, bad data dir)
-- [ ] Structured logging (JSON lines) for every harness attempt: deck, attempt, supported/total
-- [ ] Handle scanned PDFs: detect slides with no text and mark them `needs_ocr` (don't crash)
-- [ ] CLI: `python -m app ingest <file> --course "CS 2"` and `python -m app ask ...`
-- [ ] Persist harness traces (every attempt + verifier report) for debugging and evals
-- [ ] Docs: README CLI section, ARCHITECTURE update, CHANGELOG
+- [x] Unit test for `Store` (round trips, `is_current`, course listing)
+- [x] Config validation on startup with clear errors (missing key, bad data dir)
+- [x] Structured logging (JSON lines) for every harness attempt: deck, attempt, supported/total
+- [x] Handle scanned PDFs: detect slides with no text and mark them `needs_ocr` (don't crash)
+- [x] CLI: `python -m app ingest <file> --course "CS 2"` and `python -m app ask ...`
+- [x] Persist harness traces (every attempt + verifier report) for debugging and evals
+- [x] Docs: README CLI section, ARCHITECTURE update, CHANGELOG
 
 **Done when:** coverage ≥ 85%, CLI works offline against fixtures.
 

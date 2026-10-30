@@ -28,3 +28,11 @@ def test_rejects_unsupported(tmp_path):
     f.write_text("hi")
     with pytest.raises(ValueError):
         parse_file(f, "CS 2")
+
+
+@pytest.mark.parametrize("name", ["bad.pdf", "bad.pptx"])
+def test_corrupt_file_is_a_clear_error(tmp_path, name):
+    f = tmp_path / name
+    f.write_bytes(b"not really a document")
+    with pytest.raises(ValueError, match="Could not read"):
+        parse_file(f, "CS 2")

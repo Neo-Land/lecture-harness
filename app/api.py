@@ -9,10 +9,9 @@ from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from .config import settings
-from .harness import answer_question
+from .config import settings, validate_settings
 from .parsing import SUPPORTED
-from .pipeline import ingest_file, sync_canvas
+from .pipeline import ask_course, ingest_file, sync_canvas
 from .store import Store
 
 
@@ -66,7 +65,10 @@ def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
         dest.parent.mkdir(parents=True, exist_ok=True)
         with dest.open("wb") as fh:
             shutil.copyfileobj(file.file, fh)
-        return ingest_file(dest, course, store, llm, judge, max_revisions=settings.max_revisions)
+        try:
+            return ingest_file(dest, course, store, llm, judge, max_revisions=settings.max_revisions)
+        except ValueError as err:
+            raise HTTPException(400, str(err)) from err
 
     @app.post("/sync")
     def sync():
@@ -78,33 +80,27 @@ def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
 
     @app.post("/ask")
     def ask(req: AskRequest):
-        decks = store.decks_for_course(req.course)
-        if not decks:
+        answer = ask_course(req.course, req.question, store, llm, judge)
+        if answer is None:
             raise HTTPException(404, "no lectures for that course yet")
-        result, cites = answer_question(req.question, decks, llm, judge)
-        ans = result.output
-        return {
-            "insufficient_evidence": ans.insufficient_evidence,
-            "claims": [
-                {"text": c.text, "sources": [vars(cites[n]) for n in c.slides if n in cites]}
-                for c in ans.claims
-            ],
-            "report": result.report.model_dump(),
-        }
+        return answer
 
     return app
 
 
 def _default_app() -> FastAPI:
-    from .llm import ClaudeJudge, ClaudeLLM
+    from .llm import make_llm
+    from .logs import setup_logging
 
+    setup_logging()
+    validate_settings(settings)
     canvas = None
     if settings.canvas_base_url and settings.canvas_token:
         from .lms.canvas import CanvasClient
 
         canvas = CanvasClient(settings.canvas_base_url, settings.canvas_token)
-    judge = ClaudeJudge() if settings.use_judge else None
-    return create_app(Store(settings.db_path), ClaudeLLM(), judge, canvas)
+    llm, judge = make_llm(settings)
+    return create_app(Store(settings.db_path), llm, judge, canvas)
 
 
 def __getattr__(name):  # lazy so importing app.api in tests doesn't need an API key

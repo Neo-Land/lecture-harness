@@ -42,3 +42,8 @@ def test_upload_rejects_wrong_type(client):
 
 def test_sync_without_canvas_is_clear_error(client):
     assert client.post("/sync").status_code == 400
+
+
+def test_upload_corrupt_file_is_400(client):
+    r = client.post("/upload", data={"course": "CS 2"}, files={"file": ("x.pdf", b"junk", "application/pdf")})
+    assert r.status_code == 400

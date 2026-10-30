@@ -22,9 +22,14 @@ def _clean(text: str) -> str:
     return "\n".join(ln for ln in lines if ln)
 
 
+def _slide(index: int, text: str) -> Slide:
+    cleaned = _clean(text)
+    return Slide(number=index + 1, text=cleaned, needs_ocr=not cleaned)
+
+
 def parse_pdf(path: Path) -> list[Slide]:
     with fitz.open(path) as doc:
-        return [Slide(number=i + 1, text=_clean(page.get_text())) for i, page in enumerate(doc)]
+        return [_slide(i, page.get_text()) for i, page in enumerate(doc)]
 
 
 def parse_pptx(path: Path) -> list[Slide]:
@@ -39,7 +44,7 @@ def parse_pptx(path: Path) -> list[Slide]:
                     parts.append(" | ".join(c.text for c in row.cells))
         if s.has_notes_slide:  # speaker notes often hold the real explanation
             parts.append(s.notes_slide.notes_text_frame.text)
-        slides.append(Slide(number=i + 1, text=_clean("\n".join(parts))))
+        slides.append(_slide(i, "\n".join(parts)))
     return slides
 
 
@@ -47,5 +52,10 @@ def parse_file(path: Path, course: str, deck_id: str | None = None) -> Deck:
     ext = path.suffix.lower()
     if ext not in SUPPORTED:
         raise ValueError(f"Unsupported file type: {ext}")
-    slides = parse_pdf(path) if ext == ".pdf" else parse_pptx(path)
+    if not path.is_file():
+        raise FileNotFoundError(f"No such file: {path}")
+    try:
+        slides = parse_pdf(path) if ext == ".pdf" else parse_pptx(path)
+    except Exception as err:  # the PDF and PPTX libraries raise many unrelated types on bad files
+        raise ValueError(f"Could not read {path.name}: not a valid {ext} file") from err
     return Deck(id=deck_id or file_hash(path), course=course, title=path.stem, slides=slides)

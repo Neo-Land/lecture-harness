@@ -17,6 +17,10 @@ CREATE TABLE IF NOT EXISTS summaries (
     deck_id TEXT PRIMARY KEY REFERENCES decks(id), body TEXT NOT NULL,
     report TEXT NOT NULL, attempts INTEGER NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS traces (
+    id INTEGER PRIMARY KEY, kind TEXT NOT NULL, subject TEXT NOT NULL,
+    attempt INTEGER NOT NULL, body TEXT NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP
+);
 """
 
 
@@ -71,3 +75,16 @@ class Store:
         if not row:
             return None
         return {"summary": json.loads(row[0]), "report": json.loads(row[1]), "attempts": row[2]}
+
+    # ---- traces ------------------------------------------------------------
+    def save_trace(self, kind: str, subject: str, trace: list[dict]) -> None:
+        """Keep every attempt and verifier report, for debugging and evals. `subject` is a deck or course."""
+        self.db.executemany(
+            "INSERT INTO traces (kind, subject, attempt, body) VALUES (?,?,?,?)",
+            [(kind, subject, t["attempt"], json.dumps(t)) for t in trace],
+        )
+        self.db.commit()
+
+    def get_traces(self, subject: str) -> list[dict]:
+        rows = self.db.execute("SELECT body FROM traces WHERE subject=? ORDER BY id", (subject,)).fetchall()
+        return [json.loads(r[0]) for r in rows]
