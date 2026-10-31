@@ -25,7 +25,8 @@ Accuracy is the product: **no claim reaches the user unless the verifier passes 
 6. Push the branch and open a PR with `gh pr create` using the PR template. Push at least at
    the end of each task, so a phase produces several pushes and one or more PRs.
 7. **Never push to `main`.** Merge your own PR with `gh pr merge --squash --delete-branch` once all
-   required checks pass, per Neo's decision on 2026-10-30. Neo reviews afterwards and can revert.
+   every required check has passed, per Neo's decision on 2026-10-30. Confirm that first: never merge
+   after a failed or missing check. Neo reviews afterwards and can revert.
 8. Tick the task in `docs/PROJECT_PLAN.md` in the same PR that completes it.
 
 ## Documentation is part of "done"
