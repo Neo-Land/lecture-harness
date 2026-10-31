@@ -1,0 +1,432 @@
+/* Exam blue book: cover-blue rail, cool ruled paper, one yellow highlighter for the active citation. */
+:root {
+  --cover: #1d4a8c;
+  --cover-deep: #163a70;
+  --on-cover: #f2f6fc;
+  --paper: #f5f8fb;
+  --rule: #cfdbe8;
+  --ink: #17233a;
+  --ink-soft: #4b5a73;
+  --highlighter: #fbe94d;
+  --warn: #8a3b12;
+  --line: 1.75rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 1.0625rem / var(--line) var(--font-reading), Georgia, serif;
+}
+
+h1,
+h2,
+h3,
+button,
+label,
+input {
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+h1 {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 var(--line);
+  max-width: 24ch;
+}
+
+h2 {
+  font-size: 1.3125rem;
+  line-height: var(--line);
+  font-weight: 600;
+  margin: calc(var(--line) * 1.5) 0 calc(var(--line) / 2);
+}
+
+a {
+  color: var(--cover);
+}
+
+:focus-visible {
+  outline: 3px solid var(--cover);
+  outline-offset: 2px;
+}
+
+.skip {
+  position: absolute;
+  left: -999px;
+  background: var(--paper);
+  padding: 0.5rem 1rem;
+  z-index: 2;
+}
+
+.skip:focus {
+  left: 1rem;
+  top: 1rem;
+}
+
+/* Rail: the booklet's cover */
+.rail {
+  background: var(--cover);
+  color: var(--on-cover);
+  padding: 2rem 1.25rem;
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+.rail :focus-visible {
+  outline-color: var(--highlighter);
+}
+
+.rail a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.rail a:hover {
+  text-decoration: underline;
+}
+
+.wordmark {
+  display: block;
+  font-size: 1.375rem;
+  line-height: 1.625rem;
+  font-weight: 700;
+  border: 2px solid var(--on-cover);
+  padding: 0.625rem 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.rail ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.rail li + li {
+  margin-top: 0.5rem;
+}
+
+.rail li a {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  line-height: 1.375rem;
+}
+
+.rail .note {
+  font-size: 0.9375rem;
+  line-height: 1.375rem;
+  margin: 0;
+}
+
+.add-lecture {
+  display: block;
+  margin-top: 2rem;
+  font-weight: 600;
+}
+
+/* Paper */
+main {
+  padding: 3rem clamp(1rem, 4vw, 3.5rem);
+  min-width: 0;
+}
+
+.narrow {
+  max-width: 42rem;
+}
+
+.lede {
+  color: var(--ink-soft);
+  max-width: 62ch;
+  margin: calc(var(--line) * -0.5) 0 var(--line);
+}
+
+.lecture {
+  display: grid;
+  grid-template-columns: minmax(0, 38rem) minmax(20rem, 1fr);
+  gap: clamp(1.5rem, 3vw, 3rem);
+  align-items: start;
+}
+
+/* Claims sit on the ruled lines of the page */
+.claims {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background-image: linear-gradient(to bottom, transparent calc(var(--line) - 1px), var(--rule) 1px);
+  background-size: 100% var(--line);
+}
+
+.claims li {
+  margin: 0 0 var(--line);
+}
+
+.claim-text {
+  padding: 0.1em 0.15em;
+  margin-right: 0.35rem;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  transition: background-size 220ms ease-out;
+  background: linear-gradient(var(--highlighter), var(--highlighter)) no-repeat left center / 0 100%;
+}
+
+.claim-text.active {
+  background-size: 100% 100%;
+}
+
+.cite {
+  font: 600 0.8125rem / 1.25rem var(--font-display), system-ui, sans-serif;
+  color: var(--cover);
+  background: var(--paper);
+  border: 1.5px solid var(--cover);
+  border-radius: 2px;
+  padding: 0 0.375rem;
+  margin-right: 0.25rem;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  display: inline-block;
+}
+
+.cite:hover,
+.cite[aria-pressed="true"] {
+  background: var(--cover);
+  color: var(--on-cover);
+}
+
+.check-note {
+  font-family: var(--font-display), system-ui, sans-serif;
+  margin: 0 0 var(--line);
+  line-height: 1.5rem;
+}
+
+.notice {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--warn);
+  border-left: 3px solid var(--warn);
+  padding-left: 0.75rem;
+  margin: 0 0 var(--line);
+  max-width: 62ch;
+}
+
+/* Slide pinned next to the notes, like a booklet held open */
+.slide-pane {
+  position: sticky;
+  top: 1.5rem;
+  font-family: var(--font-display), system-ui, sans-serif;
+}
+
+.slide-pane img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--rule);
+  background: #fff;
+}
+
+.slide-text {
+  white-space: pre-wrap;
+  background: #fff;
+  border: 1px solid var(--rule);
+  padding: 1rem;
+  margin: 0;
+  font: 400 1rem / 1.5rem var(--font-reading), Georgia, serif;
+  min-height: 12rem;
+  overflow-wrap: anywhere;
+}
+
+.slide-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+button,
+.button {
+  font-weight: 600;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--on-cover);
+  background: var(--cover);
+  border: 0;
+  padding: 0.375rem 0.875rem;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: var(--cover-deep);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* Lists and forms */
+.lectures {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--rule);
+  max-width: 42rem;
+}
+
+.lectures li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+
+.muted {
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+form.stack {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 28rem;
+}
+
+label {
+  display: grid;
+  gap: 0.375rem;
+  font-weight: 600;
+  line-height: 1.5rem;
+}
+
+input[type="text"],
+input[type="file"] {
+  font-weight: 400;
+  font-size: 1rem;
+  width: 100%;
+  padding: 0.5rem;
+  background: #fff;
+  color: var(--ink);
+  border: 1.5px solid var(--ink-soft);
+}
+
+.ask-row {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 42rem;
+}
+
+.ask-row label {
+  flex: 1;
+}
+
+.ask-row button {
+  align-self: end;
+  padding-block: 0.625rem;
+}
+
+.error {
+  color: var(--warn);
+}
+
+/* Visuals */
+.visual {
+  margin: 0 0 calc(var(--line) * 1.5);
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+.visual figcaption {
+  font: 600 1.0625rem / 1.5rem var(--font-display), system-ui, sans-serif;
+  margin-bottom: 0.5rem;
+}
+
+.visual table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  background: #fff;
+}
+
+.visual th,
+.visual td {
+  text-align: left;
+  border: 1px solid var(--rule);
+  padding: 0.375rem 0.625rem;
+}
+
+.visual dt {
+  font-weight: 700;
+}
+
+.visual dd {
+  margin: 0 0 0.5rem;
+}
+
+.visual-sources {
+  display: block;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 62rem) {
+  .lecture {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .slide-pane {
+    position: static;
+    order: -1;
+  }
+}
+
+@media (max-width: 44rem) {
+  body {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+  }
+
+  .rail {
+    padding: 1rem;
+  }
+
+  .wordmark {
+    display: inline-block;
+    margin-bottom: 0.75rem;
+  }
+
+  .add-lecture {
+    margin-top: 0.75rem;
+  }
+
+  main {
+    padding: 1.5rem 1rem;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+    line-height: 2.125rem;
+  }
+
+  .ask-row {
+    flex-direction: column;
+  }
+
+  .ask-row button {
+    align-self: start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .claim-text {
+    transition: none;
+  }
+}

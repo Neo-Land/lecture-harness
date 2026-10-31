@@ -11,6 +11,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from .config import settings, validate_settings
+from .models import Deck, Slide, Summary, VerificationReport
 from .parsing import SUPPORTED
 from .pipeline import ask_course, ingest_file, sync_canvas
 from .store import Store
@@ -19,6 +20,52 @@ from .store import Store
 class AskRequest(BaseModel):
     course: str
     question: str
+
+
+class CourseOut(BaseModel):
+    course: str
+    decks: int
+
+
+class DeckListItem(BaseModel):
+    id: str
+    title: str
+    slides: int
+
+
+class DeckDetail(BaseModel):
+    deck: Deck
+    summary: Summary | None = None
+    report: VerificationReport | None = None
+    attempts: int | None = None
+    model: str | None = None
+    prompt_version: str | None = None
+
+
+class IngestResult(BaseModel):
+    deck_id: str
+    title: str
+    attempts: int
+    supported: int
+    total: int
+    needs_ocr: list[int]
+
+
+class Source(BaseModel):
+    deck_id: str
+    deck_title: str
+    slide: int
+
+
+class AnswerClaim(BaseModel):
+    text: str
+    sources: list[Source]
+
+
+class AskResponse(BaseModel):
+    insufficient_evidence: bool
+    claims: list[AnswerClaim]
+    report: VerificationReport
 
 
 def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
@@ -31,24 +78,24 @@ def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
     def health():
         return {"ok": True}
 
-    @app.get("/courses")
+    @app.get("/courses", response_model=list[CourseOut])
     def courses():
         return store.courses()
 
-    @app.get("/courses/{course}/decks")
+    @app.get("/courses/{course:path}/decks", response_model=list[DeckListItem])
     def decks(course: str):
         return [
             {"id": d.id, "title": d.title, "slides": len(d.slides)} for d in store.decks_for_course(course)
         ]
 
-    @app.get("/decks/{deck_id}")
+    @app.get("/decks/{deck_id}", response_model=DeckDetail)
     def deck(deck_id: str):
         d = store.get_deck(deck_id)
         if not d:
             raise HTTPException(404, "deck not found")
         return {"deck": d.model_dump(), **(store.get_summary(deck_id) or {})}
 
-    @app.get("/decks/{deck_id}/slides/{n}")
+    @app.get("/decks/{deck_id}/slides/{n}", response_model=Slide)
     def slide(deck_id: str, n: int):
         d = store.get_deck(deck_id)
         s = d.slide(n) if d else None
@@ -64,7 +111,7 @@ def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
             raise HTTPException(404, "no image for that slide")
         return FileResponse(settings.images_dir / d.id / f"{n}.png", media_type="image/png")
 
-    @app.post("/upload")
+    @app.post("/upload", response_model=IngestResult)
     def upload(course: str = Form(...), file: UploadFile = File(...)):
         """Manual upload: lets you use the app without Canvas access."""
         ext = Path(file.filename or "").suffix.lower()
@@ -87,7 +134,7 @@ def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
         except ValueError as err:
             raise HTTPException(400, str(err)) from err
 
-    @app.post("/sync")
+    @app.post("/sync", response_model=list[IngestResult])
     def sync():
         if canvas is None:
             raise HTTPException(400, "Canvas not configured (set CANVAS_BASE_URL and CANVAS_TOKEN)")
@@ -95,7 +142,7 @@ def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
             canvas, store, llm, judge, settings.files_dir, max_revisions=settings.max_revisions
         )
 
-    @app.post("/ask")
+    @app.post("/ask", response_model=AskResponse)
     def ask(req: AskRequest):
         answer = ask_course(req.course, req.question, store, llm, judge)
         if answer is None:

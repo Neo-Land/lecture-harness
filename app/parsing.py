@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
+import re
 import shutil
 import subprocess
 import tempfile
@@ -26,6 +27,7 @@ def file_hash(path: Path) -> str:
 
 
 def _clean(text: str) -> str:
+    text = re.sub("[\ue000-\uf8ff]", "", text)  # private-use characters: bullet glyphs in PDF fonts
     lines = [ln.strip() for ln in text.splitlines()]
     return "\n".join(ln for ln in lines if ln)
 

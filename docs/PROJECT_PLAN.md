@@ -3,7 +3,7 @@
 **Goal:** a portfolio-ready agent harness that turns lecture slides into verified abstracts and
 visuals, with a web UI for per-course questions, backed by measured accuracy numbers.
 
-**Current phase:** Phase 4 (live runs in Phases 2 and 3 are waiting on Neo)
+**Current phase:** Phase 5 (live runs in Phases 2 and 3 are waiting on Neo)
 
 ## How every phase runs
 - Work happens on branches, one PR per task group, merged by Claude Code after green CI (Neo's decision, 2026-10-30).
@@ -75,16 +75,16 @@ visuals, with a web UI for per-course questions, backed by measured accuracy num
 
 ## Phase 4 — Frontend (Next.js)
 **Branches:** `feat/phase4-web-scaffold`, `feat/phase4-lecture-page`, `feat/phase4-ask`, `ci/phase4-frontend`
-- [ ] `web/`: Next.js (App Router) + TypeScript; typed API client generated from FastAPI's OpenAPI
-- [ ] Course sidebar → lecture list → lecture page: abstract with citation chips,
-      visuals rendered from `VisualSpec` (tables, Mermaid for concept maps/timelines), slide viewer
-- [ ] Clicking a citation opens that slide image
-- [ ] Ask box scoped to a course; shows "not covered in the slides" for insufficient evidence
-- [ ] Verification badge per lecture (e.g. "12/12 claims verified, 1 revision")
-- [ ] Tests: component tests (Vitest + Testing Library) and one Playwright smoke test against a mocked API
-- [ ] CI: add `frontend` job (lint, typecheck, test, build); add it to required checks
-- [ ] Accessibility: keyboard navigation, alt text for slide images, color contrast
-- [ ] Docs: README run instructions for both apps, ARCHITECTURE diagram update, ADR on frontend choices
+- [x] `web/`: Next.js (App Router) + TypeScript; typed API client generated from FastAPI's OpenAPI
+- [x] Course sidebar → lecture list → lecture page: abstract with citation chips,
+      visuals rendered from `VisualSpec` (native tables and timelines, Mermaid for concept maps), slide viewer
+- [x] Clicking a citation opens that slide image
+- [x] Ask box scoped to a course; shows "not covered in the slides" for insufficient evidence
+- [x] Verification badge per lecture (e.g. "12/12 claims verified, 1 revision")
+- [x] Tests: component tests (Vitest + Testing Library) and one Playwright smoke test against a mocked API
+- [x] CI: add `frontend` job (lint, typecheck, test, build); add it to required checks
+- [x] Accessibility: keyboard navigation, alt text for slide images, color contrast
+- [x] Docs: README run instructions for both apps, ARCHITECTURE diagram update, ADR on frontend choices
 
 **Done when:** you can upload a deck, read the verified lecture page, and ask a cited question in the browser.
 
