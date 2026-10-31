@@ -4,6 +4,10 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 ### Added
+- Canvas: "Sync with Canvas" button, `python -m app sync`, last-synced times, a course ignore list,
+  and friendly course names. One unreadable file no longer stops a sync.
+
+### Added
 - Web app: course list, lecture page with citations beside the slide, visuals, ask box, and upload.
 - Typed API responses and a generated TypeScript client.
 

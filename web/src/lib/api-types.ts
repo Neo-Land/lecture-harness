@@ -21,6 +21,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/config": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Config */
+        get: operations["config_config_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/courses": {
         parameters: {
             query?: never;
@@ -171,6 +188,11 @@ export interface components {
             /** Sources */
             sources: components["schemas"]["Source"][];
         };
+        /** AppConfig */
+        AppConfig: {
+            /** Canvas */
+            canvas: boolean;
+        };
         /** AskRequest */
         AskRequest: {
             /** Course */
@@ -206,6 +228,8 @@ export interface components {
             course: string;
             /** Decks */
             decks: number;
+            /** Last Synced */
+            last_synced?: string | null;
         };
         /** Deck */
         Deck: {
@@ -384,6 +408,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": unknown;
+                };
+            };
+        };
+    };
+    config_config_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AppConfig"];
                 };
             };
         };

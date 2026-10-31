@@ -3,7 +3,7 @@
 **Goal:** a portfolio-ready agent harness that turns lecture slides into verified abstracts and
 visuals, with a web UI for per-course questions, backed by measured accuracy numbers.
 
-**Current phase:** Phase 5 (live runs in Phases 2 and 3 are waiting on Neo)
+**Current phase:** Phase 6 (live runs in Phases 2 and 3 are waiting on Neo)
 
 ## How every phase runs
 - Work happens on branches, one PR per task group, merged by Claude Code after green CI (Neo's decision, 2026-10-30).
@@ -91,11 +91,13 @@ visuals, with a web UI for per-course questions, backed by measured accuracy num
 ## Phase 5 — Canvas sync for real
 **Branches:** `feat/phase5-canvas-tests`, `feat/phase5-scheduled-sync`
 - [ ] Neo checks whether Montclair allows Canvas personal access tokens
-- [ ] Tests for `CanvasClient` with `httpx.MockTransport`: pagination, filtering, download, 401/403 handling
-- [ ] "Sync now" button in the UI + last-synced time per course
-- [ ] Optional scheduled sync (local cron/launchd instructions; never in public CI)
-- [ ] Course name mapping/ignore list in config
-- [ ] Docs: `docs/CANVAS.md` (how to get a token, what the app reads, how to revoke it)
+- [x] Tests for `CanvasClient` with `httpx.MockTransport`: pagination, filtering, download, 401/403 handling
+- [x] "Sync now" button in the UI + last-synced time per course
+- [x] Optional scheduled sync (local cron/launchd instructions; never in public CI)
+- [x] Course name mapping/ignore list in config
+- [x] Docs: `docs/CANVAS.md` (how to get a token, what the app reads, how to revoke it)
+
+- [ ] Neo: run a real sync on his machine (needs the token check above)
 
 **Done when:** Neo runs sync on his own machine and new lectures appear verified. Token never leaves `.env`.
 

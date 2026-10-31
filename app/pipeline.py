@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from datetime import UTC, datetime
 from pathlib import Path
 
 from .harness import answer_question, summarize_deck
@@ -71,27 +72,37 @@ def sync_canvas(
     files_dir: Path,
     per_course: int = 5,
     max_revisions: int = 2,
+    ignore: set[str] = frozenset(),
+    names: dict[str, str] | None = None,
 ) -> list[dict]:
-    """Process only files that are new or changed since the last run."""
+    """Process only files that are new or changed since the last run. One unreadable file is logged
+    and skipped, so it can't block the rest of the sync."""
     done = []
     for course in canvas.courses():
+        if course["name"] in ignore:
+            continue
+        name = (names or {}).get(course["name"], course["name"])
         for f in canvas.lecture_files(course["id"], limit=per_course):
             deck_id, version = f"canvas-{f['id']}", f.get("updated_at", "")
             if store.is_current(deck_id, version):
                 continue
             path = canvas.download(f, files_dir / str(course["id"]))
-            log.info("new file %s in %s", f.get("display_name"), course["name"])
-            done.append(
-                ingest_file(
-                    path,
-                    course["name"],
-                    store,
-                    llm,
-                    judge,
-                    deck_id=deck_id,
-                    source_version=version,
-                    max_revisions=max_revisions,
-                    images_dir=files_dir.parent / "images",
+            log.info("new_file", extra={"file": f.get("display_name"), "course": name})
+            try:
+                done.append(
+                    ingest_file(
+                        path,
+                        name,
+                        store,
+                        llm,
+                        judge,
+                        deck_id=deck_id,
+                        source_version=version,
+                        max_revisions=max_revisions,
+                        images_dir=files_dir.parent / "images",
+                    )
                 )
-            )
+            except ValueError as err:
+                log.warning("file_skipped", extra={"file": f.get("display_name"), "error": str(err)})
+        store.mark_synced(name, datetime.now(UTC).isoformat(timespec="seconds"))
     return done

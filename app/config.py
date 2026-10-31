@@ -33,6 +33,8 @@ class Settings:
 
     canvas_base_url: str | None = os.getenv("CANVAS_BASE_URL")  # e.g. https://<school>.instructure.com
     canvas_token: str | None = os.getenv("CANVAS_TOKEN")
+    canvas_ignore: str = os.getenv("CANVAS_IGNORE_COURSES", "")  # Advising;Library
+    canvas_names: str = os.getenv("CANVAS_COURSE_NAMES", "")  # CMPT-270-01=Algorithms;MATH-122=Calculus
 
     data_dir: Path = Path(os.getenv("HARNESS_DATA_DIR", "data"))
 

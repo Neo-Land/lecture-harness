@@ -18,6 +18,9 @@ CREATE TABLE IF NOT EXISTS summaries (
     report TEXT NOT NULL, attempts INTEGER NOT NULL, model TEXT NOT NULL, prompt_version TEXT NOT NULL,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE IF NOT EXISTS syncs (
+    course TEXT PRIMARY KEY, synced_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS traces (
     id INTEGER PRIMARY KEY, kind TEXT NOT NULL, subject TEXT NOT NULL,
     attempt INTEGER NOT NULL, body TEXT NOT NULL, created_at TEXT DEFAULT CURRENT_TIMESTAMP
@@ -52,9 +55,15 @@ class Store:
 
     def courses(self) -> list[dict]:
         rows = self.db.execute(
-            "SELECT course, COUNT(*) FROM decks GROUP BY course ORDER BY course"
+            "SELECT d.course, COUNT(*), s.synced_at FROM decks d LEFT JOIN syncs s ON s.course = d.course "
+            "GROUP BY d.course ORDER BY d.course"
         ).fetchall()
-        return [{"course": c, "decks": n} for c, n in rows]
+        return [{"course": c, "decks": n, "last_synced": at} for c, n, at in rows]
+
+    def mark_synced(self, course: str, synced_at: str) -> None:
+        """Record that a course was just checked against the LMS."""
+        self.db.execute("INSERT OR REPLACE INTO syncs (course, synced_at) VALUES (?,?)", (course, synced_at))
+        self.db.commit()
 
     def is_current(self, deck_id: str, source_version: str) -> bool:
         """True if we already have this exact version of an LMS file (skip re-processing)."""

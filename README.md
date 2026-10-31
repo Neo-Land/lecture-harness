@@ -28,6 +28,7 @@ Questions with no supporting slides return `insufficient_evidence: true` instead
 ```bash
 python -m app ingest lecture7.pdf --course "CS 2"
 python -m app ask "What is merge sort's worst case?" --course "CS 2"
+python -m app sync      # pull new lectures from Canvas; see docs/CANVAS.md
 ```
 
 Add `--offline` (or set `HARNESS_OFFLINE=true`) to run with no API key. Offline mode is not AI: it only
@@ -85,6 +86,7 @@ uvicorn app.api:app --reload    # http://localhost:8000/docs
 | `GET /health` | liveness check |
 | `POST /upload` (form: `course`, `file`) | add a PDF/PPTX manually |
 | `POST /sync` | pull new/changed files from Canvas |
+| `GET /config` | which optional features are on |
 | `GET /courses`, `GET /courses/{course}/decks` | browse |
 | `GET /decks/{id}` | slides + verified summary + verification report |
 | `GET /decks/{id}/slides/{n}` | one slide (for citation links) |
@@ -95,6 +97,7 @@ uvicorn app.api:app --reload    # http://localhost:8000/docs
 
 - [`CLAUDE.md`](CLAUDE.md) — rules for Claude Code in this repo
 - [`docs/PROJECT_PLAN.md`](docs/PROJECT_PLAN.md) — phases, tasks, current status
+- [`docs/CANVAS.md`](docs/CANVAS.md) — connecting Canvas
 - [`docs/SETUP_ACCESS.md`](docs/SETUP_ACCESS.md) — setup and what access to grant
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`docs/decisions/`](docs/decisions/) · [`CHANGELOG.md`](CHANGELOG.md)
 

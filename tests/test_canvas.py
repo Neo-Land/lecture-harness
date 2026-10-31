@@ -3,7 +3,7 @@
 import httpx
 import pytest
 
-from app.lms.canvas import CanvasClient
+from app.lms.canvas import CanvasClient, parse_ignore, parse_names
 
 BASE = "https://school.instructure.com"
 PDF = "application/pdf"
@@ -60,3 +60,17 @@ def test_download_writes_file(tmp_path):
 def test_bad_token_raises():
     with pytest.raises(httpx.HTTPStatusError):
         make_client("wrong").courses()
+
+
+def test_forbidden_raises():
+    def deny(_):
+        return httpx.Response(403)
+
+    http = httpx.Client(transport=httpx.MockTransport(deny))
+    with pytest.raises(httpx.HTTPStatusError):
+        CanvasClient(BASE, "tok", client=http).lecture_files(1)
+
+
+def test_config_parsers():
+    assert parse_ignore(" Advising ; Library;") == {"Advising", "Library"}
+    assert parse_names("CMPT-270 = Algorithms; junk; A=B=C") == {"CMPT-270": "Algorithms", "A": "B=C"}

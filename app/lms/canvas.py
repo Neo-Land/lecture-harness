@@ -16,6 +16,17 @@ LECTURE_TYPES = {
 }
 
 
+def parse_ignore(raw: str) -> set[str]:
+    """Course names to skip, from `Advising;Library`."""
+    return {name.strip() for name in raw.split(";") if name.strip()}
+
+
+def parse_names(raw: str) -> dict[str, str]:
+    """Friendly course names, from `CMPT-270-01=Algorithms;MATH-122=Calculus`."""
+    pairs = (item.split("=", 1) for item in raw.split(";") if "=" in item)
+    return {canvas.strip(): friendly.strip() for canvas, friendly in pairs}
+
+
 class CanvasClient:
     def __init__(self, base_url: str, token: str, client: httpx.Client | None = None):
         self.base = base_url.rstrip("/") + "/api/v1"

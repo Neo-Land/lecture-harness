@@ -42,6 +42,10 @@ LMS/upload ─► parsing.py ─► store.py ─► harness.py ─────�
 Ingest renders each slide to `data/images/<deck>/<n>.png` as a best-effort step (see ADR 0003). Every
 summary records the model id and prompt version that produced it.
 
+## Canvas sync
+Runs only on the owner's machine and never in CI. Files are processed once per version, and a course's
+`last_synced` time updates after each check. See `docs/CANVAS.md`.
+
 ## Frontend
 `web/` is a Next.js app that calls the API from the browser. Its types are generated from `web/openapi.json`,
 and a backend test fails if that file is stale. See ADR 0005.
