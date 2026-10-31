@@ -19,7 +19,10 @@ def test_courses_and_decks_by_course(store, sorting_deck):
     store.save_deck(sorting_deck)
     store.save_deck(sorting_deck.model_copy(update={"id": "d2"}))
     store.save_deck(sorting_deck.model_copy(update={"id": "d3", "course": "Bio"}))
-    assert store.courses() == [{"course": "Bio", "decks": 1}, {"course": "CS 2", "decks": 2}]
+    assert store.courses() == [
+        {"course": "Bio", "decks": 1, "last_synced": None},
+        {"course": "CS 2", "decks": 2, "last_synced": None},
+    ]
     assert {d.id for d in store.decks_for_course("CS 2")} == {"d1", "d2"}
 
 

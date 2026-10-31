@@ -132,6 +132,30 @@ a {
   font-weight: 600;
 }
 
+.synced {
+  display: block;
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+  opacity: 0.85;
+}
+
+.sync {
+  margin-top: 1rem;
+}
+
+.sync .note {
+  margin-top: 0.5rem;
+}
+
+button.on-cover {
+  background: var(--on-cover);
+  color: var(--cover-deep);
+}
+
+button.on-cover:hover:not(:disabled) {
+  background: #fff;
+}
+
 /* Paper */
 main {
   padding: 3rem clamp(1rem, 4vw, 3.5rem);

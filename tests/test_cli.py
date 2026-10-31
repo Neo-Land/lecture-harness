@@ -13,6 +13,7 @@ from app.models import Deck, Slide
 from app.parsing import parse_file
 from app.pipeline import ingest_file
 from tests.conftest import FakeLLM
+from tests.test_pipeline import FakeCanvas
 
 
 def test_ingest_then_ask_offline(pdf_file, store, capsys):
@@ -78,3 +79,14 @@ def test_json_formatter_includes_extra_fields():
     record.deck, record.attempt = "d1", 2
     entry = json.loads(JsonFormatter().format(record))
     assert entry["msg"] == "harness_attempt" and entry["deck"] == "d1" and entry["attempt"] == 2
+
+
+def test_sync_command(pdf_file, store, capsys):
+    canvas = FakeCanvas(pdf_file)
+    assert main(["sync"], llm=ExtractiveLLM(), store=store, canvas=canvas) == 0
+    assert json.loads(capsys.readouterr().out)[0]["deck_id"] == "canvas-99"
+
+
+def test_sync_without_canvas_is_a_clear_error(store, capsys):
+    assert main(["sync"], llm=ExtractiveLLM(), store=store) == 2
+    assert "CANVAS_BASE_URL" in capsys.readouterr().err

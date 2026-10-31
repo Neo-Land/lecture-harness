@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 
@@ -27,7 +28,7 @@ def test_upload_then_browse_then_ask(client, pdf_file):
         )
     assert r.status_code == 200 and r.json()["supported"] == 3
 
-    assert client.get("/courses").json() == [{"course": "CS 2", "decks": 1}]
+    assert client.get("/courses").json() == [{"course": "CS 2", "decks": 1, "last_synced": None}]
     deck_id = client.get("/courses/CS 2/decks").json()[0]["id"]
 
     detail = client.get(f"/decks/{deck_id}").json()
@@ -62,3 +63,27 @@ def test_course_names_with_slashes_work(client, pdf_file):
     with pdf_file.open("rb") as fh:
         client.post("/upload", data={"course": "CS/MATH 1"}, files={"file": ("l.pdf", fh)})
     assert len(client.get("/courses/CS%2FMATH 1/decks").json()) == 1
+
+
+class RejectingCanvas:
+    def __init__(self, error):
+        self.error = error
+
+    def courses(self):
+        raise self.error
+
+
+@pytest.mark.parametrize(
+    "error, message",
+    [
+        (httpx.HTTPStatusError("x", request=None, response=httpx.Response(401)), "rejected the token"),
+        (httpx.HTTPStatusError("x", request=None, response=httpx.Response(500)), "status 500"),
+        (httpx.ConnectError("x"), "Can't reach Canvas"),
+    ],
+)
+def test_sync_failures_are_clear(store, tmp_path, monkeypatch, error, message):
+    monkeypatch.setattr(api, "settings", Settings(data_dir=tmp_path))
+    client = TestClient(api.create_app(store, FakeLLM(), canvas=RejectingCanvas(error)))
+    r = client.post("/sync")
+    assert r.status_code == 502 and message in r.json()["detail"]
+    assert client.get("/config").json() == {"canvas": True}

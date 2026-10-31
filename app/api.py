@@ -5,12 +5,14 @@ from __future__ import annotations
 import shutil
 from pathlib import Path
 
+import httpx
 from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from .config import settings, validate_settings
+from .lms.canvas import CanvasClient, parse_ignore, parse_names
 from .models import Deck, Slide, Summary, VerificationReport
 from .parsing import SUPPORTED
 from .pipeline import ask_course, ingest_file, sync_canvas
@@ -25,6 +27,11 @@ class AskRequest(BaseModel):
 class CourseOut(BaseModel):
     course: str
     decks: int
+    last_synced: str | None = None
+
+
+class AppConfig(BaseModel):
+    canvas: bool
 
 
 class DeckListItem(BaseModel):
@@ -77,6 +84,10 @@ def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
     @app.get("/health")
     def health():
         return {"ok": True}
+
+    @app.get("/config", response_model=AppConfig)
+    def config():
+        return {"canvas": canvas is not None}
 
     @app.get("/courses", response_model=list[CourseOut])
     def courses():
@@ -138,9 +149,23 @@ def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
     def sync():
         if canvas is None:
             raise HTTPException(400, "Canvas not configured (set CANVAS_BASE_URL and CANVAS_TOKEN)")
-        return sync_canvas(
-            canvas, store, llm, judge, settings.files_dir, max_revisions=settings.max_revisions
-        )
+        try:
+            return sync_canvas(
+                canvas,
+                store,
+                llm,
+                judge,
+                settings.files_dir,
+                max_revisions=settings.max_revisions,
+                ignore=parse_ignore(settings.canvas_ignore),
+                names=parse_names(settings.canvas_names),
+            )
+        except httpx.HTTPStatusError as err:
+            if err.response.status_code in (401, 403):
+                raise HTTPException(502, "Canvas rejected the token. Create a new one in Canvas.") from err
+            raise HTTPException(502, f"Canvas returned status {err.response.status_code}.") from err
+        except httpx.TransportError as err:
+            raise HTTPException(502, "Can't reach Canvas. Check CANVAS_BASE_URL.") from err
 
     @app.post("/ask", response_model=AskResponse)
     def ask(req: AskRequest):
@@ -160,8 +185,6 @@ def _default_app() -> FastAPI:
     validate_settings(settings)
     canvas = None
     if settings.canvas_base_url and settings.canvas_token:
-        from .lms.canvas import CanvasClient
-
         canvas = CanvasClient(settings.canvas_base_url, settings.canvas_token)
     llm, judge = make_llm(settings)
     return create_app(Store(settings.db_path), llm, judge, canvas)

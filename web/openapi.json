@@ -21,6 +21,24 @@
         }
       }
     },
+    "/config": {
+      "get": {
+        "summary": "Config",
+        "operationId": "config_config_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppConfig"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/courses": {
       "get": {
         "summary": "Courses",
@@ -342,6 +360,19 @@
         ],
         "title": "AnswerClaim"
       },
+      "AppConfig": {
+        "properties": {
+          "canvas": {
+            "type": "boolean",
+            "title": "Canvas"
+          }
+        },
+        "type": "object",
+        "required": [
+          "canvas"
+        ],
+        "title": "AppConfig"
+      },
       "AskRequest": {
         "properties": {
           "course": {
@@ -435,6 +466,17 @@
           "decks": {
             "type": "integer",
             "title": "Decks"
+          },
+          "last_synced": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Synced"
           }
         },
         "type": "object",

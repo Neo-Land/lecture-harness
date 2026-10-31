@@ -5,6 +5,7 @@ import type { DeckDetail, VisualSpec } from "@/lib/api";
 import { AskBox } from "./AskBox";
 import { CheckNote } from "./CheckNote";
 import { LectureView } from "./LectureView";
+import { SyncButton } from "./SyncButton";
 import { conceptMapSource, Visual } from "./Visuals";
 
 const post = vi.hoisted(() => vi.fn());
@@ -142,5 +143,23 @@ describe("Visuals", () => {
     expect(source).toContain('n0["A ] --> B[click"]');
     expect(source).toContain('n0 -->|"uses"| n1');
     expect(source).not.toContain("ghost");
+  });
+});
+
+describe("SyncButton", () => {
+  it("reports new lectures and refreshes the course list", async () => {
+    post.mockResolvedValue({ data: [{ deck_id: "a" }] });
+    const onSynced = vi.fn();
+    render(<SyncButton onSynced={onSynced} />);
+    await userEvent.click(screen.getByRole("button", { name: "Sync with Canvas" }));
+    expect(await screen.findByText("Added 1 new or updated lecture.")).toBeInTheDocument();
+    expect(onSynced).toHaveBeenCalled();
+  });
+
+  it("shows the API's error", async () => {
+    post.mockResolvedValue({ error: { detail: "Canvas rejected the token." } });
+    render(<SyncButton onSynced={() => {}} />);
+    await userEvent.click(screen.getByRole("button", { name: "Sync with Canvas" }));
+    expect(await screen.findByText("Canvas rejected the token.")).toBeInTheDocument();
   });
 });

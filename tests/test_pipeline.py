@@ -39,3 +39,18 @@ def test_sync_skips_unchanged_and_reprocesses_updated(pdf_file, store, tmp_path)
     canvas.version = "v2"  # professor re-uploaded
     assert len(sync_canvas(canvas, store, llm, None, tmp_path)) == 1
     assert store.get_summary("canvas-99")["report"]["passed"]
+
+
+def test_ignore_list_and_friendly_names(pdf_file, store, tmp_path):
+    llm = FakeLLM(summaries=[GOOD_SUMMARY])
+    assert sync_canvas(FakeCanvas(pdf_file), store, llm, None, tmp_path, ignore={"CS 2"}) == []
+    assert store.courses() == []
+    sync_canvas(FakeCanvas(pdf_file), store, llm, None, tmp_path, names={"CS 2": "Algorithms"})
+    course = store.courses()[0]
+    assert course["course"] == "Algorithms" and course["last_synced"]
+
+
+def test_unreadable_file_is_skipped_not_fatal(tmp_path, store):
+    bad = tmp_path / "bad.pdf"
+    bad.write_bytes(b"not a pdf")
+    assert sync_canvas(FakeCanvas(bad), store, FakeLLM(), None, tmp_path / "out") == []
