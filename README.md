@@ -47,6 +47,21 @@ cd web && npm install && npm run dev   # terminal 2, then open http://localhost:
 After changing an API response, regenerate the frontend's types:
 `python scripts/export_openapi.py && cd web && npm run gen:api`.
 
+## Docker
+
+```bash
+docker compose up --build     # full app, reads optional .env, then open http://localhost:3000
+```
+
+Public demo setup: [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
+
+## Security
+
+Secrets live only in `.env`, and real course files stay in the git-ignored `data/`. The public demo is
+read-only, has no Canvas access, holds only open-license slides, needs no API key by default, and limits
+questions per visitor and per day. There are no user accounts, so **don't expose the full app to the
+internet**: anyone could upload files, spend your API budget, and read your courses.
+
 ## Layout
 
 ```

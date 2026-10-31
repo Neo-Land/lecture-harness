@@ -365,11 +365,16 @@
           "canvas": {
             "type": "boolean",
             "title": "Canvas"
+          },
+          "demo": {
+            "type": "boolean",
+            "title": "Demo"
           }
         },
         "type": "object",
         "required": [
-          "canvas"
+          "canvas",
+          "demo"
         ],
         "title": "AppConfig"
       },
@@ -381,6 +386,8 @@
           },
           "question": {
             "type": "string",
+            "maxLength": 500,
+            "minLength": 1,
             "title": "Question"
           }
         },

@@ -42,6 +42,10 @@ LMS/upload ─► parsing.py ─► store.py ─► harness.py ─────�
 Ingest renders each slide to `data/images/<deck>/<n>.png` as a best-effort step (see ADR 0003). Every
 summary records the model id and prompt version that produced it.
 
+## Demo mode
+`HARNESS_DEMO=true` refuses `/upload` and `/sync` and limits `/ask`. The demo Docker image seeds its database
+at build time, with no API key by default. Limits are in memory, so the demo must run as one server.
+
 ## Canvas sync
 Runs only on the owner's machine and never in CI. Files are processed once per version, and a course's
 `last_synced` time updates after each check. See `docs/CANVAS.md`.

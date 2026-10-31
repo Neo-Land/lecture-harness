@@ -17,9 +17,12 @@ export function AskBox({ course }: { course: string }) {
     setError(null);
     setAnswer(null);
     try {
-      const { data } = await api.POST("/ask", { body: { course, question } });
+      const { data, error: failure } = await api.POST("/ask", { body: { course, question } });
       if (data) setAnswer(data);
-      else setError("The question couldn't be answered. Try again.");
+      else {
+        const detail = (failure as { detail?: unknown })?.detail;
+        setError(typeof detail === "string" ? detail : "The question couldn't be answered. Try again.");
+      }
     } catch {
       setError(CANT_REACH_API);
     }

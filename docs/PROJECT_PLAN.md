@@ -3,7 +3,7 @@
 **Goal:** a portfolio-ready agent harness that turns lecture slides into verified abstracts and
 visuals, with a web UI for per-course questions, backed by measured accuracy numbers.
 
-**Current phase:** Phase 6 (live runs in Phases 2 and 3 are waiting on Neo)
+**Current phase:** Phase 7 (live runs in Phases 2 and 3 are waiting on Neo)
 
 ## How every phase runs
 - Work happens on branches, one PR per task group, merged by Claude Code after green CI (Neo's decision, 2026-10-30).
@@ -103,13 +103,13 @@ visuals, with a web UI for per-course questions, backed by measured accuracy num
 
 ## Phase 6 — Packaging and deployment (CD)
 **Branches:** `feat/phase6-docker`, `ci/phase6-release`
-- [ ] `Dockerfile` (backend) + `docker-compose.yml` (backend + web)
-- [ ] **Demo mode:** public deployment serves only the open-license eval decks, read-only;
+- [x] `Dockerfile` (backend) + `docker-compose.yml` (backend + web)
+- [x] **Demo mode:** public deployment serves only the open-license eval decks, read-only;
       `/upload` and `/sync` disabled; rate-limited `/ask` with a daily spend cap
-- [ ] Release workflow: on tag `v*`, run full CI, build images, publish a GitHub Release with notes from `CHANGELOG.md`
-- [ ] Deploy: web on Vercel, API on Render/Fly (Neo connects these via their GitHub integrations;
+- [x] Release workflow: on tag `v*`, run full CI, build images, publish a GitHub Release with notes from `CHANGELOG.md`
+- [ ] Neo: deploy: web on Vercel, API on Render/Fly (Neo connects these via their GitHub integrations;
       deploys only from `main`/tags)
-- [ ] Docs: `docs/DEPLOYMENT.md`, ADR on hosting, security notes in README
+- [x] Docs: `docs/DEPLOYMENT.md`, ADR on hosting, security notes in README
 
 **Done when:** a public demo URL works and `v1.0.0` is released.
 

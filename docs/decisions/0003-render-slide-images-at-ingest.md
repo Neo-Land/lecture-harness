@@ -18,5 +18,6 @@ LibreOffice to convert first; without it the app falls back to text only rather 
 
 ## Consequences
 - `Slide.has_image` tells the frontend whether to show an image or the text.
-- PPTX images depend on a tool outside `requirements.txt`, so the Docker image installs LibreOffice.
+- PPTX images depend on a tool outside `requirements.txt`, so the full Docker image installs LibreOffice.
+  The demo image only has PDFs and leaves it out.
 - Images are a separate best-effort step: a render failure never loses the deck or its summary.

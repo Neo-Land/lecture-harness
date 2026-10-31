@@ -192,6 +192,8 @@ export interface components {
         AppConfig: {
             /** Canvas */
             canvas: boolean;
+            /** Demo */
+            demo: boolean;
         };
         /** AskRequest */
         AskRequest: {

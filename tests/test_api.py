@@ -86,4 +86,4 @@ def test_sync_failures_are_clear(store, tmp_path, monkeypatch, error, message):
     client = TestClient(api.create_app(store, FakeLLM(), canvas=RejectingCanvas(error)))
     r = client.post("/sync")
     assert r.status_code == 502 and message in r.json()["detail"]
-    assert client.get("/config").json() == {"canvas": True}
+    assert client.get("/config").json() == {"canvas": True, "demo": False}
