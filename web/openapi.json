@@ -1,0 +1,836 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Lecture Harness",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Health",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses": {
+      "get": {
+        "summary": "Courses",
+        "operationId": "courses_courses_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/CourseOut"
+                  },
+                  "type": "array",
+                  "title": "Response Courses Courses Get"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/courses/{course}/decks": {
+      "get": {
+        "summary": "Decks",
+        "operationId": "decks_courses__course__decks_get",
+        "parameters": [
+          {
+            "name": "course",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Course"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeckListItem"
+                  },
+                  "title": "Response Decks Courses  Course  Decks Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/decks/{deck_id}": {
+      "get": {
+        "summary": "Deck",
+        "operationId": "deck_decks__deck_id__get",
+        "parameters": [
+          {
+            "name": "deck_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Deck Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeckDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/decks/{deck_id}/slides/{n}": {
+      "get": {
+        "summary": "Slide",
+        "operationId": "slide_decks__deck_id__slides__n__get",
+        "parameters": [
+          {
+            "name": "deck_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Deck Id"
+            }
+          },
+          {
+            "name": "n",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "N"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Slide"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/decks/{deck_id}/slides/{n}/image": {
+      "get": {
+        "summary": "Slide Image",
+        "operationId": "slide_image_decks__deck_id__slides__n__image_get",
+        "parameters": [
+          {
+            "name": "deck_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Deck Id"
+            }
+          },
+          {
+            "name": "n",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "N"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/upload": {
+      "post": {
+        "summary": "Upload",
+        "description": "Manual upload: lets you use the app without Canvas access.",
+        "operationId": "upload_upload_post",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_upload_upload_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IngestResult"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sync": {
+      "post": {
+        "summary": "Sync",
+        "operationId": "sync_sync_post",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/IngestResult"
+                  },
+                  "type": "array",
+                  "title": "Response Sync Sync Post"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ask": {
+      "post": {
+        "summary": "Ask",
+        "operationId": "ask_ask_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AskResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AnswerClaim": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/Source"
+            },
+            "type": "array",
+            "title": "Sources"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text",
+          "sources"
+        ],
+        "title": "AnswerClaim"
+      },
+      "AskRequest": {
+        "properties": {
+          "course": {
+            "type": "string",
+            "title": "Course"
+          },
+          "question": {
+            "type": "string",
+            "title": "Question"
+          }
+        },
+        "type": "object",
+        "required": [
+          "course",
+          "question"
+        ],
+        "title": "AskRequest"
+      },
+      "AskResponse": {
+        "properties": {
+          "insufficient_evidence": {
+            "type": "boolean",
+            "title": "Insufficient Evidence"
+          },
+          "claims": {
+            "items": {
+              "$ref": "#/components/schemas/AnswerClaim"
+            },
+            "type": "array",
+            "title": "Claims"
+          },
+          "report": {
+            "$ref": "#/components/schemas/VerificationReport"
+          }
+        },
+        "type": "object",
+        "required": [
+          "insufficient_evidence",
+          "claims",
+          "report"
+        ],
+        "title": "AskResponse"
+      },
+      "Body_upload_upload_post": {
+        "properties": {
+          "course": {
+            "type": "string",
+            "title": "Course"
+          },
+          "file": {
+            "type": "string",
+            "contentMediaType": "application/octet-stream",
+            "title": "File"
+          }
+        },
+        "type": "object",
+        "required": [
+          "course",
+          "file"
+        ],
+        "title": "Body_upload_upload_post"
+      },
+      "Claim": {
+        "properties": {
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "slides": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Slides"
+          }
+        },
+        "type": "object",
+        "required": [
+          "text",
+          "slides"
+        ],
+        "title": "Claim"
+      },
+      "CourseOut": {
+        "properties": {
+          "course": {
+            "type": "string",
+            "title": "Course"
+          },
+          "decks": {
+            "type": "integer",
+            "title": "Decks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "course",
+          "decks"
+        ],
+        "title": "CourseOut"
+      },
+      "Deck": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "course": {
+            "type": "string",
+            "title": "Course"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "slides": {
+            "items": {
+              "$ref": "#/components/schemas/Slide"
+            },
+            "type": "array",
+            "title": "Slides"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "course",
+          "title",
+          "slides"
+        ],
+        "title": "Deck"
+      },
+      "DeckDetail": {
+        "properties": {
+          "deck": {
+            "$ref": "#/components/schemas/Deck"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Summary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "report": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VerificationReport"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "attempts": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attempts"
+          },
+          "model": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model"
+          },
+          "prompt_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Prompt Version"
+          }
+        },
+        "type": "object",
+        "required": [
+          "deck"
+        ],
+        "title": "DeckDetail"
+      },
+      "DeckListItem": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "slides": {
+            "type": "integer",
+            "title": "Slides"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "slides"
+        ],
+        "title": "DeckListItem"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "IngestResult": {
+        "properties": {
+          "deck_id": {
+            "type": "string",
+            "title": "Deck Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "attempts": {
+            "type": "integer",
+            "title": "Attempts"
+          },
+          "supported": {
+            "type": "integer",
+            "title": "Supported"
+          },
+          "total": {
+            "type": "integer",
+            "title": "Total"
+          },
+          "needs_ocr": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Needs Ocr"
+          }
+        },
+        "type": "object",
+        "required": [
+          "deck_id",
+          "title",
+          "attempts",
+          "supported",
+          "total",
+          "needs_ocr"
+        ],
+        "title": "IngestResult"
+      },
+      "Issue": {
+        "properties": {
+          "claim": {
+            "type": "string",
+            "title": "Claim"
+          },
+          "check": {
+            "type": "string",
+            "enum": [
+              "citation",
+              "exact_fact",
+              "judge"
+            ],
+            "title": "Check"
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "claim",
+          "check",
+          "detail"
+        ],
+        "title": "Issue"
+      },
+      "Slide": {
+        "properties": {
+          "number": {
+            "type": "integer",
+            "title": "Number"
+          },
+          "text": {
+            "type": "string",
+            "title": "Text"
+          },
+          "needs_ocr": {
+            "type": "boolean",
+            "title": "Needs Ocr",
+            "default": false
+          },
+          "has_image": {
+            "type": "boolean",
+            "title": "Has Image",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "number",
+          "text"
+        ],
+        "title": "Slide"
+      },
+      "Source": {
+        "properties": {
+          "deck_id": {
+            "type": "string",
+            "title": "Deck Id"
+          },
+          "deck_title": {
+            "type": "string",
+            "title": "Deck Title"
+          },
+          "slide": {
+            "type": "integer",
+            "title": "Slide"
+          }
+        },
+        "type": "object",
+        "required": [
+          "deck_id",
+          "deck_title",
+          "slide"
+        ],
+        "title": "Source"
+      },
+      "Summary": {
+        "properties": {
+          "abstract": {
+            "items": {
+              "$ref": "#/components/schemas/Claim"
+            },
+            "type": "array",
+            "title": "Abstract"
+          },
+          "visuals": {
+            "items": {
+              "$ref": "#/components/schemas/VisualSpec"
+            },
+            "type": "array",
+            "title": "Visuals",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "abstract"
+        ],
+        "title": "Summary"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VerificationReport": {
+        "properties": {
+          "passed": {
+            "type": "boolean",
+            "title": "Passed"
+          },
+          "issues": {
+            "items": {
+              "$ref": "#/components/schemas/Issue"
+            },
+            "type": "array",
+            "title": "Issues",
+            "default": []
+          },
+          "claims_total": {
+            "type": "integer",
+            "title": "Claims Total",
+            "default": 0
+          },
+          "claims_supported": {
+            "type": "integer",
+            "title": "Claims Supported",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "passed"
+        ],
+        "title": "VerificationReport"
+      },
+      "VisualSpec": {
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "concept_map",
+              "table",
+              "timeline",
+              "key_terms"
+            ],
+            "title": "Kind"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "data": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Data"
+          },
+          "slides": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Slides"
+          }
+        },
+        "type": "object",
+        "required": [
+          "kind",
+          "title",
+          "data",
+          "slides"
+        ],
+        "title": "VisualSpec",
+        "description": "Structured visual the frontend renders. The model never draws pictures."
+      }
+    }
+  }
+}

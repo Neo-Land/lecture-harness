@@ -42,6 +42,10 @@ LMS/upload ─► parsing.py ─► store.py ─► harness.py ─────�
 Ingest renders each slide to `data/images/<deck>/<n>.png` as a best-effort step (see ADR 0003). Every
 summary records the model id and prompt version that produced it.
 
+## Frontend
+`web/` is a Next.js app that calls the API from the browser. Its types are generated from `web/openapi.json`,
+and a backend test fails if that file is stale. See ADR 0005.
+
 ## Evals
 `evals/` measures the harness and is never imported by `app/`. See `docs/EVALS.md`.
 

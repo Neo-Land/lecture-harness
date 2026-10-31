@@ -36,6 +36,16 @@ quotes lines from the slides. Logs go to stderr as JSON lines, so stdout stays c
 Real-model check, which costs money: see [`docs/RESULTS.md`](docs/RESULTS.md).
 Evaluation: `python -m evals.run` (offline, free), explained in [`docs/EVALS.md`](docs/EVALS.md).
 
+## Web app
+
+```bash
+uvicorn app.api:app --reload       # terminal 1 (HARNESS_OFFLINE=true needs no API key)
+cd web && npm install && npm run dev   # terminal 2, then open http://localhost:3000
+```
+
+After changing an API response, regenerate the frontend's types:
+`python scripts/export_openapi.py && cd web && npm run gen:api`.
+
 ## Layout
 
 ```
@@ -53,6 +63,8 @@ app/
   __main__.py   command line (ingest, ask)
   logs.py       JSON-lines logging
   config.py     settings and startup validation
+web/            Next.js frontend
+evals/          accuracy measurement
 tests/          runs offline with a scripted fake model
 ```
 
@@ -88,7 +100,6 @@ uvicorn app.api:app --reload    # http://localhost:8000/docs
 
 ## Next steps
 
-- [ ] Next.js frontend: course sidebar, lecture page (abstract + visuals + slides), ask box
 - [ ] Cache summaries by file hash; scheduled sync
 
 > Course slides are usually your professors' copyrighted material. Keep real files local

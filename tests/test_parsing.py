@@ -1,7 +1,7 @@
 import pytest
 
 from app.models import Slide
-from app.parsing import _strip_boilerplate, parse_file
+from app.parsing import _clean, _strip_boilerplate, parse_file
 
 
 def test_pdf_slides_are_numbered_and_keep_text(pdf_file):
@@ -43,3 +43,7 @@ def test_footers_and_page_numbers_do_not_count_as_evidence():
     slides = [Slide(number=i, text=f"Topic {i * 11}\nCS 101 LECTURE 1\n{i}") for i in range(1, 5)]
     cleaned = _strip_boilerplate(slides)
     assert cleaned[1].text == "Topic 22"
+
+
+def test_pdf_font_bullets_are_removed():
+    assert _clean("\uf0a7think of a sequence") == "think of a sequence"

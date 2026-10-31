@@ -4,6 +4,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 ### Added
+- Web app: course list, lecture page with citations beside the slide, visuals, ask box, and upload.
+- Typed API responses and a generated TypeScript client.
+
+### Fixed
+- PDF bullet-font characters no longer appear in slide text.
+- Course names containing a slash now work.
+
+### Added
 - Evaluation suite: 5 MIT OCW decks, draft golden sets, a planted-error set, `python -m evals.run`,
   and a manual GitHub workflow with a budget stop.
 

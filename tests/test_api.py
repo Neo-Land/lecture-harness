@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -47,3 +50,15 @@ def test_sync_without_canvas_is_clear_error(client):
 def test_upload_corrupt_file_is_400(client):
     r = client.post("/upload", data={"course": "CS 2"}, files={"file": ("x.pdf", b"junk", "application/pdf")})
     assert r.status_code == 400
+
+
+def test_frontend_schema_is_up_to_date(store):
+    schema = api.create_app(store, None).openapi()
+    committed = json.loads(Path("web/openapi.json").read_text())
+    assert schema == committed, "run: python scripts/export_openapi.py && cd web && npm run gen:api"
+
+
+def test_course_names_with_slashes_work(client, pdf_file):
+    with pdf_file.open("rb") as fh:
+        client.post("/upload", data={"course": "CS/MATH 1"}, files={"file": ("l.pdf", fh)})
+    assert len(client.get("/courses/CS%2FMATH 1/decks").json()) == 1
