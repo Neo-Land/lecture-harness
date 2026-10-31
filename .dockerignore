@@ -1,0 +1,8 @@
+.env
+.git
+.venv
+data
+web
+evals/decks
+evals/reports
+**/__pycache__

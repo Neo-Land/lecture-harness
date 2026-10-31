@@ -4,6 +4,14 @@ Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [S
 
 ## [Unreleased]
 ### Added
+- Docker images and `docker-compose.yml`.
+- Demo mode: read-only, open-license slides only, rate-limited questions with a daily cap.
+- Release workflow: tags run full CI, build images, and publish notes from this changelog.
+
+### Changed
+- Questions are limited to 500 characters.
+
+### Added
 - Canvas: "Sync with Canvas" button, `python -m app sync`, last-synced times, a course ignore list,
   and friendly course names. One unreadable file no longer stops a sync.
 

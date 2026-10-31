@@ -31,6 +31,11 @@ class Settings:
 
     offline: bool = os.getenv("HARNESS_OFFLINE", "false").lower() == "true"  # no API key, no AI
 
+    demo: bool = os.getenv("HARNESS_DEMO", "false").lower() == "true"  # read-only public demo
+    demo_asks_per_minute: int = _int_env("HARNESS_DEMO_ASKS_PER_MINUTE", 5)  # per visitor
+    demo_asks_per_day: int = _int_env("HARNESS_DEMO_ASKS_PER_DAY", 100)  # everyone, this caps spend
+    cors_origins: str = os.getenv("HARNESS_CORS_ORIGINS", "http://localhost:3000")
+
     canvas_base_url: str | None = os.getenv("CANVAS_BASE_URL")  # e.g. https://<school>.instructure.com
     canvas_token: str | None = os.getenv("CANVAS_TOKEN")
     canvas_ignore: str = os.getenv("CANVAS_IGNORE_COURSES", "")  # Advising;Library

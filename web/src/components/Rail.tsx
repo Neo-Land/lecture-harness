@@ -10,7 +10,7 @@ import { SyncButton } from "./SyncButton";
 export function Rail() {
   const pathname = usePathname();
   const [courses, setCourses] = useState<Schemas["CourseOut"][] | null>(null);
-  const [canvas, setCanvas] = useState(false);
+  const [config, setConfig] = useState<Schemas["AppConfig"] | null>(null);
 
   const load = useCallback(() => {
     api
@@ -24,8 +24,8 @@ export function Rail() {
   useEffect(() => {
     api
       .GET("/config")
-      .then(({ data }) => setCanvas(!!data?.canvas))
-      .catch(() => setCanvas(false));
+      .then(({ data }) => setConfig(data ?? null))
+      .catch(() => setConfig(null));
   }, []);
 
   return (
@@ -50,10 +50,12 @@ export function Rail() {
       ) : (
         courses && <p className="note">No courses yet.</p>
       )}
-      <Link className="add-lecture" href="/">
-        Add a lecture
-      </Link>
-      {canvas && <SyncButton onSynced={load} />}
+      {!config?.demo && (
+        <Link className="add-lecture" href="/">
+          Add a lecture
+        </Link>
+      )}
+      {config?.canvas && <SyncButton onSynced={load} />}
     </nav>
   );
 }

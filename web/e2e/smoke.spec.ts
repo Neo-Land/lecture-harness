@@ -11,7 +11,7 @@ test("read a lecture and ask a question", async ({ page }) => {
     const path = new URL(route.request().url()).pathname;
     if (route.request().method() === "OPTIONS") return route.fulfill({ status: 204, headers });
     const json = (body: unknown) => route.fulfill({ json: body, headers });
-    if (path === "/config") return json({ canvas: false });
+    if (path === "/config") return json({ canvas: false, demo: false });
     if (path === "/courses") return json([{ course: "CS 2", decks: 1 }]);
     if (path === "/courses/CS%202/decks") return json([{ id: "d1", title: "Sorting", slides: 2 }]);
     if (path === "/decks/d1") {

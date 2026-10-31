@@ -3,13 +3,15 @@
 from __future__ import annotations
 
 import shutil
+import time
+from collections.abc import Callable
 from pathlib import Path
 
 import httpx
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .config import settings, validate_settings
 from .lms.canvas import CanvasClient, parse_ignore, parse_names
@@ -21,7 +23,30 @@ from .store import Store
 
 class AskRequest(BaseModel):
     course: str
-    question: str
+    question: str = Field(min_length=1, max_length=500)
+
+
+class AskLimiter:
+    """Limits questions per visitor per minute and overall per day, so a public demo can't overspend.
+
+    ponytail: in-memory, so limits reset on restart and need one server. Move to shared storage to scale."""
+
+    def __init__(self, per_minute: int, per_day: int, clock: Callable[[], float] = time.time):
+        self.per_minute, self.per_day, self.clock = per_minute, per_day, clock
+        self.recent: dict[str, list[float]] = {}
+        self.day, self.today = -1, 0
+
+    def allow(self, visitor: str) -> bool:
+        """Count this question if it is within both limits."""
+        now = self.clock()
+        if int(now // 86400) != self.day:
+            self.day, self.today, self.recent = int(now // 86400), 0, {}
+        recent = [t for t in self.recent.get(visitor, []) if now - t < 60]
+        if self.today >= self.per_day or len(recent) >= self.per_minute:
+            return False
+        self.recent[visitor] = [*recent, now]
+        self.today += 1
+        return True
 
 
 class CourseOut(BaseModel):
@@ -32,6 +57,7 @@ class CourseOut(BaseModel):
 
 class AppConfig(BaseModel):
     canvas: bool
+    demo: bool
 
 
 class DeckListItem(BaseModel):
@@ -78,8 +104,16 @@ class AskResponse(BaseModel):
 def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
     app = FastAPI(title="Lecture Harness")
     app.add_middleware(
-        CORSMiddleware, allow_origins=["http://localhost:3000"], allow_methods=["*"], allow_headers=["*"]
+        CORSMiddleware,
+        allow_origins=[o.strip() for o in settings.cors_origins.split(",")],
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
+    limiter = AskLimiter(settings.demo_asks_per_minute, settings.demo_asks_per_day)
+
+    def refuse_in_demo() -> None:
+        if settings.demo:
+            raise HTTPException(403, "This demo is read-only.")
 
     @app.get("/health")
     def health():
@@ -87,7 +121,7 @@ def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
 
     @app.get("/config", response_model=AppConfig)
     def config():
-        return {"canvas": canvas is not None}
+        return {"canvas": canvas is not None and not settings.demo, "demo": settings.demo}
 
     @app.get("/courses", response_model=list[CourseOut])
     def courses():
@@ -125,6 +159,7 @@ def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
     @app.post("/upload", response_model=IngestResult)
     def upload(course: str = Form(...), file: UploadFile = File(...)):
         """Manual upload: lets you use the app without Canvas access."""
+        refuse_in_demo()
         ext = Path(file.filename or "").suffix.lower()
         if ext not in SUPPORTED:
             raise HTTPException(400, f"only {sorted(SUPPORTED)} supported")
@@ -147,6 +182,7 @@ def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
 
     @app.post("/sync", response_model=list[IngestResult])
     def sync():
+        refuse_in_demo()
         if canvas is None:
             raise HTTPException(400, "Canvas not configured (set CANVAS_BASE_URL and CANVAS_TOKEN)")
         try:
@@ -168,7 +204,10 @@ def create_app(store: Store, llm, judge=None, canvas=None) -> FastAPI:
             raise HTTPException(502, "Can't reach Canvas. Check CANVAS_BASE_URL.") from err
 
     @app.post("/ask", response_model=AskResponse)
-    def ask(req: AskRequest):
+    def ask(req: AskRequest, request: Request):
+        visitor = request.client.host if request.client else "unknown"
+        if settings.demo and not limiter.allow(visitor):
+            raise HTTPException(429, "The demo's question limit was reached. Try again later.")
         answer = ask_course(req.course, req.question, store, llm, judge)
         if answer is None:
             raise HTTPException(404, "no lectures for that course yet")

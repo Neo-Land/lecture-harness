@@ -1,6 +1,7 @@
 name: CI
 
 on:
+  workflow_call:
   pull_request:
   push:
     branches: [main]
@@ -30,6 +31,14 @@ jobs:
       - name: Test
         run: pytest --cov=app --cov-report=term-missing --cov-fail-under=85
 
+  images:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: docker build -t lecture-harness-demo .
+      - run: docker build --target api -t lecture-harness-api .
+      - run: docker build -t lecture-harness-web web
+
   frontend:
     runs-on: ubuntu-latest
     defaults:
@@ -37,7 +46,7 @@ jobs:
         working-directory: web
     steps:
       - uses: actions/checkout@v7
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           cache: npm
