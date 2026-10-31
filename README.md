@@ -2,15 +2,37 @@
 
 [![CI](https://github.com/Neo-Land/lecture-harness/actions/workflows/ci.yml/badge.svg)](https://github.com/Neo-Land/lecture-harness/actions/workflows/ci.yml)
 
-An agent harness that pulls new lecture slides from your LMS, writes an abstract and
-structured visuals, and **verifies every claim against the slides it cites** before
-showing it to you. Ask questions per course and get answers with clickable slide citations.
+Lecture notes where every claim is checked against the slide it cites. An AI writes the notes, plain code
+fact-checks each one, and anything that still fails is deleted before you see it.
 
+![A lecture page: a highlighted note beside the slide it cites](docs/screenshot.jpg)
+
+<sub>Shown in offline mode. Slide from MIT OpenCourseWare 6.0001, Fall 2016, CC BY-NC-SA.</sub>
+
+New here? [How it works, in plain English](docs/HOW_IT_WORKS.md) and the [case study](docs/CASE_STUDY.md).
+
+```mermaid
+flowchart LR
+  A[Canvas or upload] --> B[Parse slides]
+  B --> C[Model writes claims with citations]
+  C --> D{Verifier}
+  D -- passes --> E[Store] --> F[Web app]
+  D -- fails --> G{Tries left?}
+  G -- yes, with reasons --> C
+  G -- no --> H[Claim deleted]
 ```
-LMS sync ─► parse slides ─► model writes JSON summary ─► verifier ─► store ─► API / UI
-                                   ▲                         │
-                                   └── failed claims fed back (max N revisions)
-```
+
+## Results so far
+
+Offline run over 5 MIT lectures, with draft test sets. **The real model hasn't been run yet.**
+
+| Verifier without the AI judge | Caught |
+|---|---|
+| Wrong numbers, wrong or invented slides, renamed terms | 29 / 29 |
+| Errors of meaning (the AI judge's job, not yet measured) | 0 / 11 |
+| True claims wrongly rejected | 0 / 18 |
+
+Method and limits: [`docs/EVALS.md`](docs/EVALS.md).
 
 ## How accuracy is enforced
 
@@ -110,15 +132,13 @@ uvicorn app.api:app --reload    # http://localhost:8000/docs
 
 ## Project docs
 
+- [`docs/HOW_IT_WORKS.md`](docs/HOW_IT_WORKS.md) — plain-English explanation
+- [`docs/CASE_STUDY.md`](docs/CASE_STUDY.md) — design, what failed, numbers
 - [`CLAUDE.md`](CLAUDE.md) — rules for Claude Code in this repo
 - [`docs/PROJECT_PLAN.md`](docs/PROJECT_PLAN.md) — phases, tasks, current status
 - [`docs/CANVAS.md`](docs/CANVAS.md) — connecting Canvas
 - [`docs/SETUP_ACCESS.md`](docs/SETUP_ACCESS.md) — setup and what access to grant
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) · [`docs/decisions/`](docs/decisions/) · [`CHANGELOG.md`](CHANGELOG.md)
-
-## Next steps
-
-- [ ] Cache summaries by file hash; scheduled sync
 
 > Course slides are usually your professors' copyrighted material. Keep real files local
 > (`data/` is gitignored) and use open courseware (e.g. MIT OCW) for the public demo.
