@@ -3,6 +3,11 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
 ## [Unreleased]
+
+## [0.6.0] — 2026-10-31
+### Added
+- Plain-English explanation, case study, and a rewritten README.
+
 ### Added
 - Docker images and `docker-compose.yml`.
 - Demo mode: read-only, open-license slides only, rate-limited questions with a daily cap.

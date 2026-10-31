@@ -3,7 +3,8 @@
 **Goal:** a portfolio-ready agent harness that turns lecture slides into verified abstracts and
 visuals, with a web UI for per-course questions, backed by measured accuracy numbers.
 
-**Current phase:** Phase 7 (live runs in Phases 2 and 3 are waiting on Neo)
+**Current phase:** Phase 7. All code is done. Remaining tasks are Neo's: live runs, reviewing the eval sets,
+a real Canvas sync, connecting hosts, and the portfolio site.
 
 ## How every phase runs
 - Work happens on branches, one PR per task group, merged by Claude Code after green CI (Neo's decision, 2026-10-30).
@@ -115,10 +116,10 @@ visuals, with a web UI for per-course questions, backed by measured accuracy num
 
 ## Phase 7 — Portfolio polish
 **Branch:** `docs/phase7-case-study`
-- [ ] README: hero GIF, architecture diagram, eval results table, "how accuracy is enforced"
-- [ ] `docs/CASE_STUDY.md`: problem, design, what failed, numbers, what's next
-- [ ] Resume bullets drafted from `EVALS.md` numbers (in the PR description for Neo to edit)
-- [ ] Add the project to the portfolio site
+- [x] README: screenshot, architecture diagram, eval results table, "how accuracy is enforced"
+- [x] `docs/CASE_STUDY.md`: problem, design, what failed, numbers, what's next
+- [x] Resume bullets drafted (in the Phase 7 PR description for Neo to edit); update after live evals
+- [ ] Add the project to the portfolio site (waiting on Neo's go-ahead)
 
 **Done when:** a recruiter can understand it from the README in 60 seconds.
 

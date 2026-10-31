@@ -36,8 +36,8 @@ export default function Home() {
     <div className="narrow">
       <h1>Lecture notes you can check against the slides</h1>
       <p className="lede">
-        Add a lecture and get a summary where every claim links to the slide it came from. Claims that
-        fail the check against their slide are removed.
+        Every claim in these notes links to the slide it came from. Claims that fail the check against
+        their slide are removed.
       </p>
       {demo ? (
         <>
