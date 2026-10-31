@@ -32,8 +32,9 @@ git init -b main && git add . && git commit -m "chore: initial scaffold"
 2. `git remote add origin git@github.com:<you>/lecture-harness.git && git push -u origin main`
 3. **Branch protection** on `main` (Settings → Branches → Add rule):
    - Require a pull request before merging
-   - Require status checks to pass: `backend (3.11)` and `backend (3.13)` (add `frontend` after Phase 4)
+   - Require status checks to pass: `backend (3.11)`, `backend (3.13)`, `frontend`, and `images`
    - Block force pushes and deletions
+   - Include administrators, or a failing check won't stop an admin's merge
    - This means Claude Code cannot push to `main`. It merges its own PRs only after checks pass.
 
 ### 3. A GitHub token scoped to this repo only

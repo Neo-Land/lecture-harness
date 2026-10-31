@@ -3,6 +3,8 @@
 Format: [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Versioning: [SemVer](https://semver.org/).
 
 ## [Unreleased]
+### Fixed
+- Reverted a dependency update that broke clean frontend installs. Required checks now apply to admins.
 
 ## [0.6.0] — 2026-10-31
 ### Added
